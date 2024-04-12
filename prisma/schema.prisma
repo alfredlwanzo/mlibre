@@ -13,15 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Author {
+model User {
   id Int @id @default(autoincrement())
   name String
   bio String @db.Text
   avatar String
-  articles Article[] 
+  articles Article[]
+  role Role @default(custumer)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@map("authors")
+}
+
+enum Role {
+  custumer // Can read and comment
+  editor // Can create and publish article
+  admin // Can create, verify, block... user, article tag
+  owner // Every thing
 }
 
 model Article {
@@ -30,12 +38,35 @@ model Article {
   slug String @unique
   description String @default("")
   content String @db.Text @default("")
-  imageUrl String
+  markdown String @db.Text @default("")
+  imageUrl String @default("")
   authorId Int
-  author Author @relation(fields: [authorId],references: [id])
+  author User @relation(fields: [authorId],references: [id])
+  year Int @db.Year
   published Boolean @default(false)
   verified Boolean @default(false)
+  blocked Boolean @default(false)
+  tags ArticleTag[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@map("articles")
+}
+
+model ArticleTag {
+  articleId Int
+  article Article @relation(fields: [articleId],references: [id])
+  tagId Int
+  tag Tag @relation(fields: [tagId],references: [id])
+  @@id([articleId,tagId])
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String? @default("")
+  imageUrl String @default("")
+  published Boolean @default(true)
+  articles ArticleTag[]
+  created DateTime @default(now())
+  updated DateTime @updatedAt
 }

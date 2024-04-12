@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Alata } from "next/font/google";
 import "@/styles/globals.css";
+import "@blocknote/react/style.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const alata = Alata({ weight: "400", subsets: ["latin"] });
 
@@ -29,7 +31,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={alata.className}>{children}</body>
+      <body className={alata.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

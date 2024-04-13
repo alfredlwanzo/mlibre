@@ -19,16 +19,19 @@ model User {
   bio String @db.Text
   avatar String
   articles Article[]
-  role Role @default(custumer)
+  role Role @default(subscriber)
+  verified Boolean @default(false)
+  blocked Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@map("authors")
 }
 
 enum Role {
-  custumer // Can read and comment
-  editor // Can create and publish article
-  admin // Can create, verify, block... user, article tag
+  subscriber // Can read and comment articles
+  author // Can create articles
+  editor // Can create and publish articles
+  admin // Can create, publish, verify, block... users, articles, tags
   owner // Every thing
 }
 
@@ -44,6 +47,7 @@ model Article {
   author User @relation(fields: [authorId],references: [id])
   year Int @db.Year
   published Boolean @default(false)
+  commentable Boolean @default(true)
   verified Boolean @default(false)
   blocked Boolean @default(false)
   tags ArticleTag[]

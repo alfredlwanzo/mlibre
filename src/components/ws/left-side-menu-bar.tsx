@@ -6,7 +6,6 @@ import { UserAvatar } from "@/components/ws/user-avatar";
 import { Separator } from "@/components/ui/separator";
 import { WSMenu } from "./menu";
 import { WSMenuItem, WSMenuItemType } from "./menu-item";
-import { GrProjects } from "react-icons/gr";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -33,9 +32,9 @@ const menuItems: WSMenuItemType[] = [
     icon: <LiaHashtagSolid className="h-[1.2rem] w-[1.2rem]" />,
   },
   {
-    key: "customers",
-    label: "Lecteurs",
-    href: "/ws/customers",
+    key: "users",
+    label: "Auteurs et Lecteurs",
+    href: "/ws/users",
     icon: <FiUsers className="h-[1.2rem] w-[1.2rem]" />,
   },
 ];

@@ -69,6 +69,7 @@ const formSchema = z.object({
   customTags: z.array(tagOptionSchema),
   authorId: z.string(),
   published: z.boolean(),
+  commentable: z.boolean(),
   verified: z.boolean(),
   blocked: z.boolean(),
 });
@@ -126,6 +127,7 @@ export default function WSNewArticlePage() {
       published: true,
       authorId: "1",
       verified: false,
+      commentable: true,
       blocked: false,
     },
   });
@@ -189,99 +191,104 @@ export default function WSNewArticlePage() {
             </TooltipWrap>
           </div>
 
-          <div className="grid grid-cols-1 lg:gap-x-3 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 bg-background border lg:rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 bg-background border lg:rounded-lg">
             <div className=" col-span-4">
-              <ScrollArea className=" lg:h-[calc(100vh-66px)] pl-6 py-6 ">
-                <div className="mb-3">
-                  <Button variant="secondary">Image de couverture</Button>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className=" ">
-                      <FormControl>
-                        <AutosizeTextarea
-                          {...field}
-                          placeholder="Titre de l'article"
-                          className={cn(
-                            " min-h-[58px] h-full w-full resize-none border-none bg-transparent text-4xl font-black text-primary"
-                          )}
-                        />
-                      </FormControl>
+              <ScrollArea className=" lg:h-[calc(100vh-66px)]">
+                <Card className=" border-none">
+                  <CardHeader className="pt-0"></CardHeader>
+                  <CardContent>
+                    <div className="mb-3">
+                      <Button variant="secondary">Image de couverture</Button>
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem className=" ">
+                          <FormControl>
+                            <AutosizeTextarea
+                              {...field}
+                              placeholder="Titre de l'article"
+                              className={cn(
+                                " min-h-[58px] h-full w-full resize-none border-none bg-transparent text-4xl font-black text-primary"
+                              )}
+                            />
+                          </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <MultipleSelector
-                            value={field.value}
-                            onChange={field.onChange}
-                            defaultOptions={OPTIONS}
-                            placeholder="Ajouter les tags ..."
-                            emptyIndicator={
-                              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                Aucun résultat trouvé.
-                              </p>
-                            }
-                            className="border-none"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="pt-8">
-                  <BlockNoteView
-                    editor={editor}
-                    theme={theme === "dark" ? "dark" : "light"}
-                    onChange={async () => {
-                      // Converts the editor's contents from Block objects to HTML and store to content formfield.
-                      const html = await editor.blocksToHTMLLossy(
-                        editor.document
-                      );
-                      form.setValue("content", html);
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="tags"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <MultipleSelector
+                                value={field.value}
+                                onChange={field.onChange}
+                                defaultOptions={OPTIONS}
+                                placeholder="Ajouter les tags ..."
+                                emptyIndicator={
+                                  <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                    Aucun résultat trouvé.
+                                  </p>
+                                }
+                                className="border-none"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="pt-8">
+                      <BlockNoteView
+                        editor={editor}
+                        theme={theme === "dark" ? "dark" : "light"}
+                        onChange={async () => {
+                          // Converts the editor's contents from Block objects to HTML and store to content formfield.
+                          const html = await editor.blocksToHTMLLossy(
+                            editor.document
+                          );
+                          form.setValue("content", html);
 
-                      // Converts the editor's contents from Block objects to Markdown and store to markdown formfield.
-                      const markdown = await editor.blocksToMarkdownLossy(
-                        editor.document
-                      );
-                      form.setValue("markdown", markdown);
-                    }}
-                  />
-                  {/* Hidden HTML content field */}
-                  <FormField
-                    control={form.control}
-                    name="content"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormControl className="">
-                          <Input type="hidden" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  {/* Hidden Markdown content field */}
-                  <FormField
-                    control={form.control}
-                    name="markdown"
-                    render={({ field }) => (
-                      <FormItem className="">
-                        <FormControl className="">
-                          <Input type="hidden" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                          // Converts the editor's contents from Block objects to Markdown and store to markdown formfield.
+                          const markdown = await editor.blocksToMarkdownLossy(
+                            editor.document
+                          );
+                          form.setValue("markdown", markdown);
+                        }}
+                      />
+                      {/* Hidden HTML content field */}
+                      <FormField
+                        control={form.control}
+                        name="content"
+                        render={({ field }) => (
+                          <FormItem className="">
+                            <FormControl className="">
+                              <Input type="hidden" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      {/* Hidden Markdown content field */}
+                      <FormField
+                        control={form.control}
+                        name="markdown"
+                        render={({ field }) => (
+                          <FormItem className="">
+                            <FormControl className="">
+                              <Input type="hidden" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
               </ScrollArea>
             </div>
             <div className=" col-span-2 lg:border-l">
@@ -296,17 +303,20 @@ export default function WSNewArticlePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className=" space-y-4 flex flex-col rounded-lg border p-3 ">
+                    <div className=" space-y-4 flex flex-col ">
                       <div className="">
                         <FormField
                           control={form.control}
                           name="description"
                           render={({ field }) => (
                             <FormItem className=" ">
-                              <FormLabel>Description</FormLabel>
-                              <FormDescription className="">
-                                Extrait pertinent de l&apos;article
-                              </FormDescription>
+                              <FormLabel>
+                                Description{" "}
+                                <FormDescription className=" inline">
+                                  (Extrait pertinent de l&apos;article)
+                                </FormDescription>
+                              </FormLabel>
+
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}
@@ -324,10 +334,7 @@ export default function WSNewArticlePage() {
                           name="authorId"
                           render={({ field }) => (
                             <FormItem className="flex flex-col">
-                              <FormLabel>Auteur</FormLabel>
-                              <FormDescription>
-                                L&apos;auteur ou les auteurs de l&apos;article
-                              </FormDescription>
+                              <FormLabel>Auteur de l&apos;article</FormLabel>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <FormControl>
@@ -355,13 +362,13 @@ export default function WSNewArticlePage() {
                                       placeholder="Rechercher un auteur..."
                                       className="h-9"
                                     />
-                                    
-                                      <CommandEmpty>
-                                        Aucun auteur trouvé
-                                      </CommandEmpty>
 
-                                      <CommandGroup>
-                                        <CommandList>
+                                    <CommandEmpty>
+                                      Aucun auteur trouvé
+                                    </CommandEmpty>
+
+                                    <CommandGroup>
+                                      <CommandList>
                                         {authors.map((author) => (
                                           <CommandItem
                                             value={author.label}
@@ -384,9 +391,8 @@ export default function WSNewArticlePage() {
                                             />
                                           </CommandItem>
                                         ))}
-                                        </CommandList>
-                                      </CommandGroup>
-                                    
+                                      </CommandList>
+                                    </CommandGroup>
                                   </Command>
                                 </PopoverContent>
                               </Popover>
@@ -410,10 +416,10 @@ export default function WSNewArticlePage() {
                                   defaultOptions={[]}
                                   creatable
                                   creatableText="Créer"
-                                  placeholder="Créer un tag ici..."
+                                  placeholder="Entrer un tag ici..."
                                   emptyIndicator={
                                     <p className="text-center leading-10 text-gray-600 dark:text-gray-400">
-                                      Saissir le tag puis entré
+                                      Saissir le tag
                                     </p>
                                   }
                                   className=""
@@ -438,6 +444,29 @@ export default function WSNewArticlePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="commentable"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 ">
+                            <div className="space-y-0.5">
+                              <FormLabel>Commentaires</FormLabel>
+                              <FormDescription>
+                                L&apos;article peut-il recevoir des
+                                commentaires?
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled
+                                aria-readonly
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
                       <FormField
                         control={form.control}
                         name="verified"

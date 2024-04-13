@@ -21,7 +21,7 @@ export default function CategoriesPage() {
           />
         </div>
         <TooltipWrap content="Créer une tag">
-          <Link href="/ws/tag/new">
+          <Link href="/ws/tags/new">
             <Button variant="outline" className=" bg-transparent">
               <HiPlus className="h-[1.2rem] w-[1.2rem] mr-2" />
               <span>Créer</span>

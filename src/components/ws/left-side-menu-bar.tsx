@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { BiBookContent } from "react-icons/bi";
 import { LiaHashtagSolid } from "react-icons/lia";
+import { TiTags } from "react-icons/ti";
 
 const menuItems: WSMenuItemType[] = [
   {
@@ -29,7 +30,7 @@ const menuItems: WSMenuItemType[] = [
     key: "tags",
     label: "Tags",
     href: "/ws/tags",
-    icon: <LiaHashtagSolid className="h-[1.2rem] w-[1.2rem]" />,
+    icon: <TiTags className="h-[1.2rem] w-[1.2rem]" />,
   },
   {
     key: "users",

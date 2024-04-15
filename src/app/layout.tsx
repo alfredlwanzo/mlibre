@@ -3,6 +3,7 @@ import { Alata } from "next/font/google";
 import "@/styles/globals.css";
 import "@blocknote/react/style.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const alata = Alata({ weight: "400", subsets: ["latin"] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

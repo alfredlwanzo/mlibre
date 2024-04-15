@@ -56,7 +56,6 @@ const formSchema = z.object({
     message: "La description doit comporter au max 255 caractères.",
   }),
   role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
-  imageUrl: z.string(),
   blocked: z.boolean(),
   verified: z.boolean(),
 });
@@ -82,7 +81,6 @@ export default function WSNewUserPage() {
     defaultValues: {
       name: "",
       bio: "",
-      imageUrl: "",
       role: "subscriber",
       blocked: false,
       verified: true,
@@ -172,13 +170,19 @@ export default function WSNewUserPage() {
                               <FormLabel>Mot de passe</FormLabel>
                               <FormControl>
                                 <div className="relative flex">
-                                <Input
-                                  {...field}
-                                  type="password"
-                                  placeholder=""
-                                  className={cn("w-full font-black pr-12")}
-                                />
-                                <Button variant="ghost" size="icon" className=" absolute right-0 rounded-l"><EyeIcon/></Button>
+                                  <Input
+                                    {...field}
+                                    type="password"
+                                    placeholder=""
+                                    className={cn("w-full font-black pr-12")}
+                                  />
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l"
+                                  >
+                                    <EyeIcon className=" text-foreground" />
+                                  </Button>
                                 </div>
                               </FormControl>
 
@@ -213,7 +217,12 @@ export default function WSNewUserPage() {
                           name="bio"
                           render={({ field }) => (
                             <FormItem className=" ">
-                              <FormLabel>Biographie <FormDescription className=" inline">(Optionel)</FormDescription></FormLabel>
+                              <FormLabel>
+                                Biographie{" "}
+                                <FormDescription className=" inline">
+                                  (Optionel)
+                                </FormDescription>
+                              </FormLabel>
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}

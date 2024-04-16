@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "@/lib/utils";
+import { cn, phoneRegex, usernameRegex } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
@@ -41,31 +41,66 @@ import { useState } from "react";
 import { RoleType } from "@/lib/types";
 import { createUser } from "@/actions/ws/users/create-user";
 import { useToast } from "@/components/ui/use-toast";
+import { checkUsername } from "@/actions/ws/users/check-username";
+import { AiOutlineLoading } from "react-icons/ai";
+import { TbCircleCheckFilled } from "react-icons/tb";
+import { IoIosCloseCircle } from "react-icons/io";
 
-const formSchema = z.object({
-  email: z
-    .string()
-    .email({ message: "Le format de l'adresse mail n'est pas valide" }),
-  password: z.string().min(6, {
-    message: "Le mot de passe doit comporter au moins 6 caractères.",
-  }),
-  avatar: z.string().nullable().optional(),
-  name: z
-    .string()
-    .min(4, {
-      message: "Le nom doit comporter au moins 4 caractères.",
-    })
-    .trim(),
-  bio: z
-    .string()
-    .max(255, {
-      message: "La description doit comporter au max 255 caractères.",
-    })
-    .optional(),
-  role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
-  blocked: z.boolean().optional(),
-  verified: z.boolean().optional(),
-});
+const formSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, {
+        message: "L'identifiant doit comporter au moins 3 caractères.",
+      })
+      .max(15, {
+        message: "L'identifiant doit comporter au max 15 caractères.",
+      })
+      .regex(usernameRegex, {
+        message:
+          "L'identifiant doit contenir uniquement des lettres miniscules et des chiffres sans espace. Évitez les caractères spéciaux",
+      }),
+    email: z
+      .string()
+      .email({ message: "Le format de l'adresse mail n'est pas valide" }),
+    password: z.string().min(6, {
+      message: "Le mot de passe doit comporter au moins 6 caractères.",
+    }),
+    confirmPassword: z.string().min(6, {
+      message: "Le mot de passe doit comporter au moins 6 caractères.",
+    }),
+    avatar: z.string().nullable().optional(),
+    phone: z
+      .string()
+      .min(10, {
+        message: "Le numéro de téléphone doit comporter au moins 10 chiffres.",
+      })
+      .max(14, {
+        message: "Le numéro de téléphone doit comporter au max 14 chiffres.",
+      })
+      .regex(phoneRegex, { message: "Le numéro de téléphone n'est valide" })
+      .trim()
+      .optional(),
+    name: z
+      .string()
+      .min(4, {
+        message: "Le nom doit comporter au moins 4 caractères.",
+      })
+      .trim(),
+    bio: z
+      .string()
+      .max(255, {
+        message: "La description doit comporter au max 255 caractères.",
+      })
+      .optional(),
+    role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
+    blocked: z.boolean().optional(),
+    verified: z.boolean().optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Les mots de passe ne correspondent pas",
+  });
 
 type RoleOption = {
   label: string;
@@ -84,6 +119,9 @@ export default function NewUserForm() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [showPWD, setShowPWD] = useState<boolean>(false);
+  const [showConfirmPWD, setShowConfirmPWD] = useState<boolean>(false);
+  const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
+  const [checkingStatus, setCheckingStatus]=useState<"free"|"used">()
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -108,16 +146,6 @@ export default function NewUserForm() {
       });
       setLoading(false);
     });
-    // if (tag) {
-    //   toast({
-    //     title: "Enregisté",
-    //     variant: "success",
-    //     description: "Le compte a été bien créer",
-    //   });
-    //   setLoading(false);
-    //   form.reset();
-    //   router.back()
-    // }
   }
 
   return (
@@ -174,6 +202,59 @@ export default function NewUserForm() {
                       <div>
                         <FormField
                           control={form.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem className=" ">
+                              <FormLabel>
+                                Identifiant{" "}
+                                <span className=" text-muted-foreground">
+                                  (Nom d&apos;utilisateur
+                                </span>
+                                )
+                              </FormLabel>
+                              <FormControl>
+                                <div className="relative flex">
+                                  <Input
+                                    {...field}
+                                    placeholder=""
+                                    className={cn("w-full font-black pr-12")}
+                                    onChange={async (e) => {
+                                      field.onChange(e);
+                                      setCheckingUsername(true);
+                                      setCheckingStatus(undefined)
+                                      const username = await checkUsername(
+                                        e.target.value
+                                      );
+                                      if (username) {
+                                        setCheckingUsername(false);
+                                        setCheckingStatus("used")
+                                      }else{
+                                        setCheckingUsername(false);
+                                        setCheckingStatus("free")
+                                      }
+                                    }}
+                                  />
+
+                                  {checkingUsername && (
+                                    <AiOutlineLoading className="absolute right-3 top-[10px] animate-spin h-[1.2rem] w-[1.2rem]" />
+                                  )}
+                                  {
+                                    checkingStatus==="free"&& <TbCircleCheckFilled className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-green-400" />
+                                  }
+                                  {
+                                    checkingStatus==="used"&& <IoIosCloseCircle className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-red-400" />
+                                  }
+                                </div>
+                              </FormControl>
+
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
                           name="email"
                           render={({ field }) => (
                             <FormItem className=" ">
@@ -182,6 +263,26 @@ export default function NewUserForm() {
                                 <Input
                                   {...field}
                                   type="email"
+                                  placeholder=""
+                                  className={cn("w-full font-black")}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="phone"
+                          render={({ field }) => (
+                            <FormItem className=" ">
+                              <FormLabel>Téléphone</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="tel"
                                   placeholder=""
                                   className={cn("w-full font-black")}
                                 />
@@ -217,6 +318,45 @@ export default function NewUserForm() {
                                     }}
                                   >
                                     {showPWD ? (
+                                      <EyeOffIcon className="text-foreground" />
+                                    ) : (
+                                      <EyeIcon className=" text-foreground" />
+                                    )}
+                                  </Button>
+                                </div>
+                              </FormControl>
+
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem className=" ">
+                              <FormLabel>Confirmer le mot de passe</FormLabel>
+                              <FormControl>
+                                <div className="relative flex">
+                                  <Input
+                                    {...field}
+                                    type={showConfirmPWD ? "text" : "password"}
+                                    placeholder=""
+                                    className={cn("w-full font-black pr-12")}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setShowConfirmPWD((prev) => !prev);
+                                    }}
+                                  >
+                                    {showConfirmPWD ? (
                                       <EyeOffIcon className="text-foreground" />
                                     ) : (
                                       <EyeIcon className=" text-foreground" />

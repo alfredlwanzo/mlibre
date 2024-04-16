@@ -15,9 +15,11 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
+  username String @unique
   name String
   bio String @db.Text @default("")
   email String @unique
+  phone String?
   avatar String?
   password String
   articles Article[]

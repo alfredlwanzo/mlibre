@@ -97,7 +97,7 @@ export const TagCard: React.FC<TagCardProps> = ({
         )}
         <Button
           className=""
-          variant="outline"
+          variant="secondary"
           size="sm"
           disabled={loading}
           onClick={(e) => {
@@ -115,9 +115,6 @@ export const TagCard: React.FC<TagCardProps> = ({
               size="sm"
               loading={loading}
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-              }}
             >
               Supprimer
             </LoadingButton>

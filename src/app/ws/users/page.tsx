@@ -1,15 +1,13 @@
 import { TooltipWrap } from "@/components/tooltip-wrap";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { UserCard } from "@/components/ws/users/card";
 import { SearchUserBar } from "@/components/ws/users/search-bar";
 import prisma from "@/lib/prisma";
 import { RoleType } from "@/lib/types";
 import { cn, roleLabel } from "@/lib/utils";
 import Link from "next/link";
 import { HiPlus } from "react-icons/hi";
-import { RxStarFilled } from "react-icons/rx";
 
 const getUsers = async (role?: RoleType, q?: string) => {
   "use server";
@@ -63,7 +61,7 @@ export default async function WSUsersPage({
         </TooltipWrap>
       </div>
       <ScrollArea className=" h-[calc(100vh-64px)]">
-        <div className="px-6">
+        <div className="px-6 pb-6">
           <div className=" flex w-full justify-start pb-4 text-base text-muted-foreground">
             <Link href="/ws/users">
               <Button
@@ -133,39 +131,9 @@ export default async function WSUsersPage({
           </div>
           <div className=" grid grid-cols-1 gap-3">
             {users.map((user) => (
-              <div
-                key={user.id}
-                className="flex items-center relative p-5 space-x-5 bg-background rounded-lg"
-              >
-                <Avatar>
-                  <AvatarImage src="" />
-                  <AvatarFallback className=" uppercase">
-                    {user.name.substring(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <Link href={`/ws/users/${user.id}`}>
-                    <h3 className="font-semibold leading-none tracking-tight">
-                      {user.name}{" "}
-                      <span className=" text-muted-foreground">
-                        (@username)
-                      </span>
-                      {user.verified && (
-                        <RxStarFilled className=" inline text-blue-400" />
-                      )}
-                    </h3>
-                  </Link>
-                  <p className="text-sm text-muted-foreground">
-                    {user.email}{" "}
-                    <Badge variant="secondary" className="" >
-                      {roleLabel(user.role)}
-                    </Badge>
-                  </p>
-                </div>
-              </div>
+              <UserCard key={user.id} user={user} />
             ))}
           </div>
-
           <div
             className={cn(
               " h-[calc(100vh-192px)] p-6  justify-center items-center text-sm text-muted-foreground",

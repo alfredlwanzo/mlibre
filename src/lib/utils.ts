@@ -6,6 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const phoneRegex = new RegExp(
+  /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+);
+
+export const usernameRegex=new RegExp(/^[0-9A-Za-z]{3,15}$/)
+
 ////////////////////////////////////////
 ///////// generate hslColor ///////////
 const getHashOfString = (str: string) => {

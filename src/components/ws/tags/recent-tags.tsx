@@ -15,7 +15,7 @@ export const RecentTagsList: React.FC<RecentTagsListProps> = ({ tags }) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {tags?.map((tag) => (
             <TagCard key={tag.id} tag={tag} withActions className="border"/>
           ))}

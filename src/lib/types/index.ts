@@ -11,9 +11,11 @@ export type TagType = {
 };
 export type UserType = {
   id: number;
+  username:string;
   name: string;
   bio: string;
   email: string;
+  phone: string | null;
   avatar: string | null;
   role: RoleType;
   verified: boolean;

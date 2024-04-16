@@ -19,22 +19,24 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { TagType } from "@/lib/types";
 import { cn, getHSLColor } from "@/lib/utils";
+import { LucideExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { RxExternalLink } from "react-icons/rx";
 
 type TagCardProps = {
   tag: TagType;
   withDescription?: boolean;
   withActions?: boolean;
-  className?:string
+  className?: string;
 };
 export const TagCard: React.FC<TagCardProps> = ({
   tag,
   withDescription = false,
   withActions = false,
-  className
+  className,
 }) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -65,18 +67,23 @@ export const TagCard: React.FC<TagCardProps> = ({
   };
 
   return (
-    <Card className={cn("flex flex-col shadow-none",className)}>
+    <Card className={cn("flex flex-col shadow-none", className)}>
       <CardHeader className="flex flex-col">
-        <Link href={`/ws/tags/${tag.slug}`}>
-          <CardTitle className=" ">
+        <CardTitle className=" flex items-center">
+          <Link href={`/ws/tags/${tag.slug}`}>
             <Badge className=" bg-opacity-10">
               <span className={cn()} style={{ color: getHSLColor(tag.name) }}>
                 #
               </span>
               {tag.name}
             </Badge>
-          </CardTitle>
-        </Link>
+          </Link>
+          <div className="flex-1"/>
+          <Link href={`/t/${tag.slug}`} target="_blank" className="text-muted-foreground hover:text-primary">
+          <LucideExternalLink className=" h-[1.2rem] w-[1.2rem]"/>
+          </Link>
+        </CardTitle>
+
         <CardDescription
           className={cn("flex-1", withDescription ? "block" : "hidden")}
         >

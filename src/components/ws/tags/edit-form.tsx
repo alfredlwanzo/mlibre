@@ -39,6 +39,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { deleteTag } from "@/actions/ws/tags/delete-tag";
+import { Edit } from "lucide-react";
+import { TiTag } from "react-icons/ti";
 
 const editTagformSchema = z.object({
   id: z.number(),
@@ -63,6 +65,7 @@ type EditTagFormProps = {
 
 export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [editSlug, setEditSlug]=useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -133,7 +136,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
         <div className={cn(" bg-ws-background min-h-screen")}>
           <div className=" h-16 px-3 flex items-center gap-x-5">
             <div>
-              <h1 className="text-sm font-bold">Nouveau tag</h1>
+              <h1 className="text-sm font-bold">Tag: {tag?.name}</h1>
             </div>
             <div className="flex-1" />
             <div className="flex items-center space-x-3 py-2 rounded-md">
@@ -189,7 +192,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                   <CardHeader>
                     <CardTitle>Tag</CardTitle>
                     <CardDescription>
-                      Un est un mot ou un groupe de mots court utilisé pour
+                      Un tag est un mot ou un groupe de mots court utilisé pour
                       identifier ou classifier du contenu, comme les articles,
                       les images, les vidéos, etc.
                     </CardDescription>
@@ -258,13 +261,28 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                                 Slug
                               </FormLabel>
                               <FormControl>
-                                <Input
-                                  {...field}
-                                  placeholder="Nom du tag"
-                                  className={cn(
-                                    " w-full bg-transparent text-primary"
-                                  )}
-                                />
+                              <div className="relative flex">
+                                  <Input
+                                    {...field}
+                                    disabled={!editSlug}
+                                    placeholder="Nom du tag"
+                                    className={cn("w-full pr-12")}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setEditSlug((prev) => !prev);
+                                    }}
+                                  >
+                                   
+                                      <Edit className="text-foreground" />
+                                    
+                                  </Button>
+                                </div>
                               </FormControl>
 
                               <FormMessage />

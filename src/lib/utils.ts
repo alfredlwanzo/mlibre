@@ -1,10 +1,10 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { RoleType } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 ////////////////////////////////////////
 ///////// generate hslColor ///////////
@@ -38,15 +38,39 @@ export const getHSLColor = (name: string) => {
   return `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
 };
 
-export function formatSlug(text:string) {
+export function formatSlug(text: string) {
   // Supprimer les accents
-  const chaineSansAccents = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const chaineSansAccents = text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
   // Remplacer les caractères spéciaux par des tirets
   const chaineSansSpeciaux = chaineSansAccents.replace(/[^\w\s-]/g, "");
   // Remplacer les espaces et apostrophes par des tirets
-  const chaineSansEspacesApostrophes = chaineSansSpeciaux.replace(/[\s']/g, "-");
+  const chaineSansEspacesApostrophes = chaineSansSpeciaux.replace(
+    /[\s']/g,
+    "-"
+  );
   // Mettre tout en minuscules
   const chaineMinuscules = chaineSansEspacesApostrophes.toLowerCase();
-  
+
   return chaineMinuscules;
+}
+
+export function roleLabel(role: RoleType) {
+  switch (role) {
+    case "subscriber":
+      return "Abonné";
+      break;
+    case "author":
+      return "Auteur";
+      break;
+    case "editor":
+      return "Éditeur";
+      break;
+    case "admin":
+      return "Admin";
+      break;
+    default:
+      break;
+  }
 }

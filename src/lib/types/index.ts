@@ -9,3 +9,16 @@ export type TagType = {
   createdAt: Date;
   updatedAt: Date;
 };
+export type UserType = {
+  id: number;
+  name: string;
+  bio: string;
+  email: string;
+  avatar: string | null;
+  role: RoleType;
+  verified: boolean;
+  blocked: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+export type RoleType = "subscriber" | "author" | "editor" | "admin" | "owner";

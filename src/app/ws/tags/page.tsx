@@ -14,6 +14,7 @@ const getTags = async (q?: string) => {
   if (q) {
     tags = await prisma.tag.findMany({
       where: { name: { contains: q } },
+      orderBy:{name:"asc"}
     });
   } else {
     tags = await prisma.tag.findMany({ orderBy: { updatedAt: "desc" } });
@@ -48,7 +49,7 @@ export default async function WSTagsPage({
       <ScrollArea className=" h-[calc(100vh-64px)]">
         <div className="p-6">
           <div className={cn("pb-2", searchParams.q ? "block" : "hidden")}>
-            <h1>Résultats de recherche pour {searchParams.q}</h1>
+            <h1 className="text-sm">Résultats de recherche pour {searchParams.q}</h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {tags.map((tag) => (

@@ -34,6 +34,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { TagType } from "@/lib/types";
 import { RecentTagsList } from "./recent-tags";
+import { Edit } from "lucide-react";
 
 export const newTagformSchema = z.object({
   name: z
@@ -57,6 +58,7 @@ type NewTagFormProps = {
 
 export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [editSlug, setEditSlug]=useState<boolean>(false)
   const router = useRouter();
   const { toast } = useToast();
 
@@ -156,7 +158,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                   <CardHeader>
                     <CardTitle>Tag</CardTitle>
                     <CardDescription>
-                      Un mot ou un groupe de mots court utilisé pour identifier
+                      Un tag est un mot ou un groupe de mots court utilisé pour identifier
                       ou classifier du contenu, comme les articles, les images,
                       les vidéos, etc.
                     </CardDescription>
@@ -205,13 +207,28 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                                 Slug
                               </FormLabel>
                               <FormControl>
-                                <Input
-                                  {...field}
-                                  placeholder="Nom du tag"
-                                  className={cn(
-                                    " w-full bg-transparent text-primary"
-                                  )}
-                                />
+                                <div className="relative flex">
+                                  <Input
+                                    {...field}
+                                    disabled={!editSlug}
+                                    placeholder="Nom du tag"
+                                    className={cn("w-full pr-12")}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setEditSlug((prev) => !prev);
+                                    }}
+                                  >
+                                   
+                                      <Edit className="text-foreground" />
+                                    
+                                  </Button>
+                                </div>
                               </FormControl>
 
                               <FormMessage />

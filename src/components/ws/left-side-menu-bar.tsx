@@ -34,7 +34,7 @@ const menuItems: WSMenuItemType[] = [
   },
   {
     key: "users",
-    label: "Auteurs et Lecteurs",
+    label: "Membres",
     href: "/ws/users",
     icon: <FiUsers className="h-[1.2rem] w-[1.2rem]" />,
   },

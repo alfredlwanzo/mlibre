@@ -52,7 +52,7 @@ model Article {
   year Int @db.Year
   published Boolean @default(false)
   commentable Boolean @default(true)
-  verified Boolean @default(false)
+  verified Boolean @default(true)
   blocked Boolean @default(false)
   tags ArticleTag[]
   createdAt DateTime @default(now())

@@ -2,13 +2,24 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
-export async function deleteUser(userId: number) {
+const formSchema = z.object({
+  userId: z.number(),
+  redirectToUsers: z.boolean().optional(),
+});
+
+export async function deleteUser(formData: z.infer<typeof formSchema>) {
   const deletedUser = await prisma.user
-    .delete({ where: { id: userId } })
+    .delete({ where: { id: formData.userId } })
     .catch(() => {
       throw new Error("Failed to delete user");
     });
-  revalidatePath("/ws/users");
-  return deletedUser;
+  if (formData.redirectToUsers) {
+    redirect("/ws/users");
+  } else {
+    revalidatePath("/ws/users");
+    return deletedUser;
+  }
 }

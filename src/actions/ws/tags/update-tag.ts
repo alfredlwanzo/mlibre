@@ -11,17 +11,19 @@ const editTagformSchema = z.object({
     .min(2, {
       message: "Le titre doit comporter au moins 2 caractères.",
     })
-    .trim(),
-  slug: z.string(),
+    .trim()
+    .optional(),
+  slug: z.string().optional(),
   description: z
     .string()
     .max(255, {
       message: "La description doit comporter au max 255 caractères.",
     })
-    .nullable(),
-  imageUrl: z.string().nullable(),
-  published: z.boolean(),
-  verified: z.boolean(),
+    .nullable()
+    .optional(),
+  imageUrl: z.string().nullable().optional(),
+  published: z.boolean().optional(),
+  verified: z.boolean().optional(),
 });
 
 export async function updateTag(formData: z.infer<typeof editTagformSchema>) {

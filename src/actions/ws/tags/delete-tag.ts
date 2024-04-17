@@ -2,13 +2,24 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
-export async function deleteTag(tagId: number) {
+const formSchema = z.object({
+  tagId: z.number(),
+  redirectToTags: z.boolean().optional(),
+});
+
+export async function deleteTag(formData: z.infer<typeof formSchema>) {
   const deletedTag = await prisma.tag
-    .delete({ where: { id: tagId } })
+    .delete({ where: { id: formData.tagId } })
     .catch(() => {
       throw new Error("Failed to delete tag");
     });
-  revalidatePath("/ws/tags");
-  return deletedTag;
+  if (formData.redirectToTags) {
+    redirect("/ws/tags");
+  } else {
+    revalidatePath("/ws/tags");
+    return deletedTag;
+  }
 }

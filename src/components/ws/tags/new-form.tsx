@@ -242,7 +242,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                           name="description"
                           render={({ field }) => (
                             <FormItem className=" ">
-                              <FormLabel>Bref description du tag</FormLabel>
+                              <FormLabel>Brève description du tag</FormLabel>
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}
@@ -250,9 +250,6 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                                 />
                               </FormControl>
                               <FormMessage />
-                              {/* <FormDescription className="">
-                              Bref texte decrivant le tag
-                            </FormDescription> */}
                             </FormItem>
                           )}
                         />
@@ -308,7 +305,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
               </ScrollArea>
             </div>
             <div className=" col-span-4">
-              <ScrollArea className=" lg:h-[calc(100vh-66px)] ">
+              <ScrollArea className=" lg:h-[calc(100vh-66px)] bg-ws-background">
                 <RecentTagsList tags={recentTags}/>
               </ScrollArea>
             </div>

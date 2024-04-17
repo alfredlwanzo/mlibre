@@ -17,7 +17,13 @@ const getUsers = async (role?: RoleType, q?: string) => {
         where: {
           AND: [
             { role: role },
-            { OR: [{ name: { contains: q } }, { email: { contains: q } }] },
+            {
+              OR: [
+                { name: { contains: q } },
+                { email: { contains: q } },
+                { username: { contains: q } },
+              ],
+            },
           ],
         },
         orderBy: { updatedAt: "desc" },
@@ -29,7 +35,17 @@ const getUsers = async (role?: RoleType, q?: string) => {
   } else {
     const users = await prisma.user
       .findMany({
-        where: { OR: [{ name: { contains: q } }, { email: { contains: q } }] },
+        where: {
+          AND: [
+            {
+              OR: [
+                { name: { contains: q } },
+                { email: { contains: q } },
+                { username: { contains: q } },
+              ],
+            },
+          ],
+        },
         orderBy: { updatedAt: "desc" },
       })
       .catch((e) => {

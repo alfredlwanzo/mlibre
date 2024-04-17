@@ -46,7 +46,7 @@ export const TagCard: React.FC<TagCardProps> = ({
   const handleDelete = async () => {
     setOpenDelete(false);
     setLoading(true);
-    const deletedTag = await deleteTag(tag.id).catch(() => {
+    const deletedTag = await deleteTag({tagId:tag.id}).catch(() => {
       toast({
         title: "Echec",
         variant: "destructive",

@@ -36,71 +36,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { Edit, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import { RoleType } from "@/lib/types";
-import { createUser } from "@/actions/ws/users/create-user";
+import { RoleType, UserType } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import { checkUsername } from "@/actions/ws/users/check-username";
 import { AiOutlineLoading } from "react-icons/ai";
 import { TbCircleCheckFilled } from "react-icons/tb";
 import { IoIosCloseCircle } from "react-icons/io";
+import { updateUser } from "@/actions/ws/users/update-user";
+import { DrawerDeleteUser } from "./drawer-delete";
+import { DrawerChangePassword } from "./drawer-password";
 
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, {
-        message: "L'identifiant doit comporter au moins 3 caractères.",
-      })
-      .max(15, {
-        message: "L'identifiant doit comporter au max 15 caractères.",
-      })
-      .regex(usernameRegex, {
-        message:
-          "L'identifiant doit contenir uniquement des lettres miniscules et des chiffres sans espace. Évitez les caractères spéciaux",
-      }),
-    email: z
-      .string()
-      .email({ message: "Le format de l'adresse mail n'est pas valide" }),
-    password: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
+const formSchema = z.object({
+  id: z.number(),
+  username: z
+    .string()
+    .min(3, {
+      message: "L'identifiant doit comporter au moins 3 caractères.",
+    })
+    .max(15, {
+      message: "L'identifiant doit comporter au max 15 caractères.",
+    })
+    .regex(usernameRegex, {
+      message:
+        "L'identifiant doit contenir uniquement des lettres miniscules et des chiffres sans espace. Évitez les caractères spéciaux",
     }),
-    confirmPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-    avatar: z.string().nullable().optional(),
-    phone: z
-      .string()
-      .min(10, {
-        message: "Le numéro de téléphone doit comporter au moins 10 chiffres.",
-      })
-      .max(14, {
-        message: "Le numéro de téléphone doit comporter au max 14 chiffres.",
-      })
-      .regex(phoneRegex, { message: "Le numéro de téléphone n'est valide" })
-      .trim()
-      .optional(),
-    name: z
-      .string()
-      .min(4, {
-        message: "Le nom doit comporter au moins 4 caractères.",
-      })
-      .trim(),
-    bio: z
-      .string()
-      .max(255, {
-        message: "La description doit comporter au max 255 caractères.",
-      })
-      .optional(),
-    role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
-    blocked: z.boolean().optional(),
-    verified: z.boolean().optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Les mots de passe ne correspondent pas",
-  });
+  email: z
+    .string()
+    .email({ message: "Le format de l'adresse mail n'est pas valide" }),
+  avatar: z.string().nullable().optional(),
+  phone: z
+    .string()
+    .min(10, {
+      message: "Le numéro de téléphone doit comporter au moins 10 chiffres.",
+    })
+    .max(14, {
+      message: "Le numéro de téléphone doit comporter au max 14 chiffres.",
+    })
+    .regex(phoneRegex, { message: "Le numéro de téléphone n'est valide" })
+    .trim()
+    .optional(),
+  name: z
+    .string()
+    .min(4, {
+      message: "Le nom doit comporter au moins 4 caractères.",
+    })
+    .trim(),
+  bio: z
+    .string()
+    .max(255, {
+      message: "La description doit comporter au max 255 caractères.",
+    })
+    .optional(),
+  role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
+  blocked: z.boolean().optional(),
+  verified: z.boolean().optional(),
+});
 
 type RoleOption = {
   label: string;
@@ -114,29 +106,38 @@ const roles: RoleOption[] = [
   { label: "Administrateur", value: "admin" },
   //   { label: "Owner", value: "owner" },
 ];
+type EditUserFormProps = {
+  user?: UserType | null;
+};
 
-export default function NewUserForm() {
+export default function EditUserForm({ user }: EditUserFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
-  const [showPWD, setShowPWD] = useState<boolean>(false);
-  const [showConfirmPWD, setShowConfirmPWD] = useState<boolean>(false);
+  const [editUsername, setEditUsername] = useState<boolean>(false);
+  const [editEmail, setEditEmail] = useState<boolean>(false);
   const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
-  const [checkingStatus, setCheckingStatus]=useState<"free"|"used">()
+  const [checkingStatus, setCheckingStatus] = useState<"free" | "used">();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bio: "",
-      role: "subscriber",
-      blocked: false,
-      verified: true,
+      id: user?.id,
+      username: user?.username,
+      email: user?.email,
+      name: user?.name,
+      phone: user?.phone ?? "",
+      avatar: user?.avatar,
+      bio: user?.bio,
+      role: user?.role,
+      blocked: user?.blocked,
+      verified: user?.verified,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    await createUser(values).catch(() => {
+    const user = await updateUser(values).catch(() => {
       toast({
         title: "Echec",
         variant: "destructive",
@@ -146,6 +147,15 @@ export default function NewUserForm() {
       });
       setLoading(false);
     });
+    if (user) {
+      toast({
+        title: "Enregisté",
+        variant: "success",
+        description: "Les modifications ont été bien enregistrer",
+      });
+      setLoading(false);
+      router.replace(`/ws/users/${user.username}`);
+    }
   }
 
   return (
@@ -154,7 +164,7 @@ export default function NewUserForm() {
         <div className={cn(" bg-ws-background min-h-screen")}>
           <div className=" h-16 px-3 flex items-center gap-x-5">
             <div>
-              <h1 className="text-sm font-bold">Nouveau compte</h1>
+              <h1 className="text-sm font-bold">Compte: {user?.name}</h1>
             </div>
             <div className="flex-1" />
 
@@ -186,8 +196,8 @@ export default function NewUserForm() {
             </TooltipWrap>
           </div>
 
-          <div className="grid grid-cols-1  lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 ">
-            <div className=" col-span-2 lg:rounded-lg bg-background">
+          <div className="grid grid-cols-1 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60">
+            <div className=" col-span-2 bg-background lg:rounded-lg">
               <ScrollArea className=" lg:h-[calc(100vh-66px)] ">
                 <Card className=" border-none shadow-none">
                   <CardHeader>
@@ -217,33 +227,49 @@ export default function NewUserForm() {
                                   <Input
                                     {...field}
                                     placeholder=""
+                                    disabled={!editUsername}
                                     className={cn("w-full font-black pr-12")}
                                     onChange={async (e) => {
                                       field.onChange(e);
                                       setCheckingUsername(true);
-                                      setCheckingStatus(undefined)
+                                      setCheckingStatus(undefined);
                                       const username = await checkUsername(
                                         e.target.value
                                       );
-                                      if (username) {
+                                      if (
+                                        username &&
+                                        username !== user?.username
+                                      ) {
                                         setCheckingUsername(false);
-                                        setCheckingStatus("used")
-                                      }else{
+                                        setCheckingStatus("used");
+                                      } else {
                                         setCheckingUsername(false);
-                                        setCheckingStatus("free")
+                                        setCheckingStatus("free");
                                       }
                                     }}
                                   />
 
                                   {checkingUsername && (
-                                    <AiOutlineLoading className="absolute right-3 top-[10px] animate-spin h-[1.2rem] w-[1.2rem]" />
+                                    <AiOutlineLoading className="absolute right-12 top-[10px] animate-spin h-[1.2rem] w-[1.2rem]" />
                                   )}
-                                  {
-                                    checkingStatus==="free"&& <TbCircleCheckFilled className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-green-400" />
-                                  }
-                                  {
-                                    checkingStatus==="used"&& <IoIosCloseCircle className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-red-400" />
-                                  }
+                                  {checkingStatus === "free" && (
+                                    <TbCircleCheckFilled className="absolute right-12 top-[10px] h-[1.2rem] w-[1.2rem] text-green-400" />
+                                  )}
+                                  {checkingStatus === "used" && (
+                                    <IoIosCloseCircle className="absolute right-12 top-[10px] h-[1.2rem] w-[1.2rem] text-red-400" />
+                                  )}
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l-none"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setEditUsername((prev) => !prev);
+                                    }}
+                                  >
+                                    <Edit className=" text-muted-foreground" />
+                                  </Button>
                                 </div>
                               </FormControl>
 
@@ -260,12 +286,27 @@ export default function NewUserForm() {
                             <FormItem className=" ">
                               <FormLabel>Email</FormLabel>
                               <FormControl>
-                                <Input
-                                  {...field}
-                                  type="email"
-                                  placeholder=""
-                                  className={cn("w-full font-black")}
-                                />
+                                <div className="relative flex">
+                                  <Input
+                                    {...field}
+                                    disabled={!editEmail}
+                                    type="email"
+                                    placeholder=""
+                                    className={cn("w-full font-black")}
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className=" absolute right-0 rounded-l-none"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setEditEmail((prev) => !prev);
+                                    }}
+                                  >
+                                    <Edit className=" text-muted-foreground" />
+                                  </Button>
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -295,81 +336,21 @@ export default function NewUserForm() {
                       <div>
                         <FormField
                           control={form.control}
-                          name="password"
+                          name="id"
                           render={({ field }) => (
                             <FormItem className=" ">
-                              <FormLabel>Mot de passe</FormLabel>
                               <FormControl>
-                                <div className="relative flex">
-                                  <Input
-                                    {...field}
-                                    type={showPWD ? "text" : "password"}
-                                    placeholder=""
-                                    className={cn("w-full font-black pr-12")}
-                                  />
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className=" absolute right-0 rounded-l-none"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setShowPWD((prev) => !prev);
-                                    }}
-                                  >
-                                    {showPWD ? (
-                                      <EyeOffIcon className="text-muted-foreground" />
-                                    ) : (
-                                      <EyeIcon className=" text-foreground" />
-                                    )}
-                                  </Button>
-                                </div>
+                                <Input
+                                  {...field}
+                                  type="hidden"
+                                  placeholder=""
+                                />
                               </FormControl>
-
-                              <FormMessage />
                             </FormItem>
                           )}
                         />
                       </div>
-                      <div>
-                        <FormField
-                          control={form.control}
-                          name="confirmPassword"
-                          render={({ field }) => (
-                            <FormItem className=" ">
-                              <FormLabel>Confirmer le mot de passe</FormLabel>
-                              <FormControl>
-                                <div className="relative flex">
-                                  <Input
-                                    {...field}
-                                    type={showConfirmPWD ? "text" : "password"}
-                                    placeholder=""
-                                    className={cn("w-full font-black pr-12")}
-                                  />
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className=" absolute right-0 rounded-l-none"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setShowConfirmPWD((prev) => !prev);
-                                    }}
-                                  >
-                                    {showConfirmPWD ? (
-                                      <EyeOffIcon className="text-muted-foreground" />
-                                    ) : (
-                                      <EyeIcon className=" text-muted-foreground" />
-                                    )}
-                                  </Button>
-                                </div>
-                              </FormControl>
 
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
                       <div>
                         <FormField
                           control={form.control}
@@ -460,6 +441,14 @@ export default function NewUserForm() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      <div className="flex flex-col justify-center rounded-lg border p-3  space-y-2">
+                        <FormLabel>Sécurité</FormLabel>
+                        <DrawerChangePassword
+                          user={user}
+                          loading={loading}
+                          setLoading={setLoading}
+                        />
+                      </div>
                       <FormField
                         control={form.control}
                         name="verified"
@@ -496,12 +485,35 @@ export default function NewUserForm() {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
-                                disabled
-                                aria-readonly
                               />
                             </FormControl>
                           </FormItem>
                         )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-none shadow-none">
+                  <CardHeader>
+                    <CardTitle>Zone dangereuse</CardTitle>
+                    <CardDescription>
+                      Soyez conscient de ce que vous pouvez faire ici. La
+                      suppression d&apos;un compte peut occasioner une perte de
+                      contenus
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col justify-center rounded-lg border p-3  space-y-2">
+                      <FormLabel className="">Suppression</FormLabel>
+                      <FormDescription>
+                        En supprimant ce compte, vous acceptez perdre tout
+                        contenu qui lui est lié. Noter que cette opération est
+                        irréversible.
+                      </FormDescription>
+                      <DrawerDeleteUser
+                        user={user}
+                        loading={loading}
+                        setLoading={setLoading}
                       />
                     </div>
                   </CardContent>

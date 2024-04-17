@@ -45,6 +45,7 @@ import {
 import { RxCaretSort, RxCheck } from "react-icons/rx";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
 
 const tagOptionSchema = z.object({
   label: z.string(),
@@ -114,6 +115,7 @@ export default function WSNewArticlePage() {
   const router = useRouter();
   const editor = useCreateBlockNote({ uploadFile });
   const { theme } = useTheme();
+  const [loading, setLoading]=useState<boolean>(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -126,7 +128,7 @@ export default function WSNewArticlePage() {
       customTags: [],
       published: true,
       authorId: "1",
-      verified: false,
+      verified: true,
       commentable: true,
       blocked: false,
     },
@@ -152,11 +154,9 @@ export default function WSNewArticlePage() {
                 render={({ field }) => (
                   <FormItem className="flex flex-row space-x-2 items-center rounded-lg border px-3 py-1">
                     <FormLabel>Publié</FormLabel>
-
                     <FormControl className="p-0 m-0">
                       <Switch
                         checked={field.value}
-                        disabled
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
@@ -168,8 +168,8 @@ export default function WSNewArticlePage() {
               <LoadingButton
                 type="submit"
                 variant="default"
-                loading={true}
-                disabled
+                loading={loading}
+                disabled={loading}
                 className=""
               >
                 Enregistrer
@@ -181,8 +181,9 @@ export default function WSNewArticlePage() {
                 className=""
                 size="icon"
                 type="button"
-                disabled
-                onClick={() => {
+                disabled={loading}
+                onClick={(e) => {
+                  e.preventDefault()
                   router.back();
                 }}
               >
@@ -194,11 +195,18 @@ export default function WSNewArticlePage() {
           <div className="grid grid-cols-1 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 bg-background border lg:rounded-lg">
             <div className=" col-span-4">
               <ScrollArea className=" lg:h-[calc(100vh-66px)]">
-                <Card className=" border-none">
+                <Card className=" border-none shadow-none">
                   <CardHeader className="pt-0"></CardHeader>
                   <CardContent>
                     <div className="mb-3">
-                      <Button variant="secondary">Image de couverture</Button>
+                      <Button
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                        }}
+                      >
+                        Image de couverture
+                      </Button>
                     </div>
                     <FormField
                       control={form.control}
@@ -460,8 +468,7 @@ export default function WSNewArticlePage() {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
-                                disabled
-                                aria-readonly
+                               
                               />
                             </FormControl>
                           </FormItem>
@@ -483,8 +490,7 @@ export default function WSNewArticlePage() {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
-                                disabled
-                                aria-readonly
+                               
                               />
                             </FormControl>
                           </FormItem>

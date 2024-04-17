@@ -28,7 +28,7 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
   const handleDelete = async () => {
     setOpenDelete(false);
     setLoading(true);
-    const deletedTag = await deleteUser(user.id).catch(() => {
+    const deletedTag = await deleteUser({ userId: user.id }).catch(() => {
       toast({
         title: "Echec",
         variant: "destructive",
@@ -51,17 +51,22 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 p-5 bg-background rounded-lg">
       <div className="flex flex-1 space-x-4">
-        <Avatar>
-          <AvatarImage src="" />
-          <AvatarFallback
-            className=" uppercase"
-            style={{ color: getHSLColor(user.name) }}
-          >
-            {user.name.substring(0, 2)}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar>
+            <AvatarImage src="" />
+            <AvatarFallback
+              className=" uppercase"
+              style={{ color: getHSLColor(user.name) }}
+            >
+              {user.name.substring(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          {user.blocked && (
+            <div className=" absolute right-0 bottom-0 h-3 w-3 rounded-full bg-red-400 border-2 border-background" />
+          )}
+        </div>
         <div>
-          <Link href={`/ws/users/${user.id}`}>
+          <Link href={`/ws/users/${user.username}`}>
             <h3 className="font-semibold leading-none tracking-tight">
               {user.name}{" "}
               {user.verified && (
@@ -70,23 +75,23 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
             </h3>
           </Link>
           <p className="text-sm text-muted-foreground">
-            {user.email}{" "}
+            @{user.username}{" "}
             <Badge variant="secondary" className="">
               {roleLabel(user.role)}
             </Badge>
           </p>
         </div>
       </div>
-      <div className="flex flex-col md:items-end pt-2 md:pt-0">
-        <Link href={`/ws/users/${user.id}`}>
+      <div className="flex flex-col md:items-end py-4 md:py-0 pl-14 md:pl-0">
+        <Link href={`/ws/users/${user.username}`}>
           <h3 className="text-sm text-muted-foreground leading-none tracking-tight">
             {user.phone ?? ""}
           </h3>
         </Link>
-        <p className="text-sm text-muted-foreground"> @{user.username}</p>
+        <p className="text-sm text-muted-foreground"> {user.email}</p>
       </div>
       <div className="flex justify-end space-x-3">
-        <Link href={`/ws/users/${user.id}`}>
+        <Link href={`/ws/users/${user.username}`}>
           <Button variant="secondary" size="sm" disabled={loading}>
             Modifier
           </Button>

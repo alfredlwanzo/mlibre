@@ -41,6 +41,7 @@ import {
 import { deleteTag } from "@/actions/ws/tags/delete-tag";
 import { Edit } from "lucide-react";
 import { TiTag } from "react-icons/ti";
+import { DrawerDeleteTag } from "./drawer-delete";
 
 const editTagformSchema = z.object({
   id: z.number(),
@@ -65,7 +66,7 @@ type EditTagFormProps = {
 
 export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [editSlug, setEditSlug]=useState<boolean>(false);
+  const [editSlug, setEditSlug] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -104,31 +105,6 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
       router.replace(`/ws/tags/${tag.slug}`);
     }
   }
-
-  const handleDelete = async () => {
-    if (typeof tag?.id === "number") {
-      setLoading(true);
-      const deletedTag = await deleteTag(tag?.id).catch(() => {
-        toast({
-          title: "Echec",
-          variant: "destructive",
-          description: (
-            <div>Une erreur s&apos;est produite. Veuillez réessayer!</div>
-          ),
-        });
-        setLoading(false);
-      });
-      if (deletedTag) {
-        toast({
-          title: "Supprimé",
-          variant: "success",
-          description: "Le tag a été bien supprimer",
-        });
-        setLoading(false);
-        router.push("/ws/tags");
-      }
-    }
-  };
 
   return (
     <Form {...form}>
@@ -185,7 +161,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
             </TooltipWrap>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 bg-background border lg:rounded-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-6 max-w-screen-lg mx-auto min-w-60 bg-ws-background border lg:rounded-lg">
             <div className=" col-span-2 lg:border-r">
               <ScrollArea className=" lg:h-[calc(100vh-66px)] ">
                 <Card className=" border-none shadow-none">
@@ -261,7 +237,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                                 Slug
                               </FormLabel>
                               <FormControl>
-                              <div className="relative flex">
+                                <div className="relative flex">
                                   <Input
                                     {...field}
                                     disabled={!editSlug}
@@ -278,9 +254,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                                       setEditSlug((prev) => !prev);
                                     }}
                                   >
-                                   
-                                      <Edit className="text-foreground" />
-                                    
+                                    <Edit className=" text-muted-foreground" />
                                   </Button>
                                 </div>
                               </FormControl>
@@ -296,7 +270,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                           name="description"
                           render={({ field }) => (
                             <FormItem className=" ">
-                              <FormLabel>Bref description du tag</FormLabel>
+                              <FormLabel>Brève description du tag</FormLabel>
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}
@@ -359,7 +333,12 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                 <Card className="border-none shadow-none">
                   <CardHeader>
                     <CardTitle>Zone dangereuse</CardTitle>
-                    <CardDescription>Soyez conscient de ce que vous pouvez faire ici. La suppression d&apos;un tag peut occasioner des perturbations liés à l&apos;accessibilité et au référencement</CardDescription>
+                    <CardDescription>
+                      Soyez conscient de ce que vous pouvez faire ici. La
+                      suppression d&apos;un tag peut occasioner des
+                      perturbations liés à l&apos;accessibilité et au
+                      référencement
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col justify-center rounded-lg border p-3  space-y-2">
@@ -369,19 +348,11 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                         l&apos;utilise. Noter que cette opération est
                         irréversible.
                       </FormDescription>
-                      <LoadingButton
-                        variant="destructive"
-                        size="sm"
+                      <DrawerDeleteTag
+                        tag={tag}
                         loading={loading}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDelete();
-                        }}
-                        className="w-full"
-                      >
-                        Supprimer
-                      </LoadingButton>
+                        setLoading={setLoading}
+                      />
                     </div>
                   </CardContent>
                 </Card>

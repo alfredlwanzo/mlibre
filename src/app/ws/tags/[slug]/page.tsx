@@ -5,6 +5,7 @@ const getTag = async (slug: string) => {
   const tag = await prisma.tag.findFirst({ where: { slug } });
   return tag;
 };
+
 export default async function WSTagPage({
   params,
 }: {

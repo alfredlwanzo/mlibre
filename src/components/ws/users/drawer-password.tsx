@@ -63,29 +63,32 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
     defaultValues: {},
   });
 
-  const onSubmit = async (formData:z.infer<typeof formSchema>) => {
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     if (typeof user?.id === "number") {
       setOpenDelete(false);
       setLoading(true);
-      const updatedUser =  await changeUserPassword({ ...formData,userId: user.id, }).catch(() => {
-          toast({
-            title: "Echec",
-            variant: "destructive",
-            description: (
-              <div>Une erreur s&apos;est produite. Veuillez réessayer!</div>
-            ),
-          });
-          setLoading(false);
+      const updatedUser = await changeUserPassword({
+        ...formData,
+        userId: user.id,
+      }).catch(() => {
+        toast({
+          title: "Echec",
+          variant: "destructive",
+          description: (
+            <div>Une erreur s&apos;est produite. Veuillez réessayer!</div>
+          ),
         });
-        if (updatedUser) {
-            toast({
-              title: "Modifié",
-              variant: "success",
-              description: "Le mot de passe a été bien modifié",
-            });
-            setLoading(false);
-            formPWD.reset()
-          }
+        setLoading(false);
+      });
+      if (updatedUser) {
+        toast({
+          title: "Modifié",
+          variant: "success",
+          description: "Le mot de passe a été bien modifié",
+        });
+        setLoading(false);
+        formPWD.reset();
+      }
     }
   };
 
@@ -198,15 +201,7 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
                 </div>
               </div>
               <DrawerFooter>
-                <Button
-                  type="submit"
-                //   onClick={(e) => {
-                //     e.preventDefault();
-                //     onSubmit
-                //   }}
-                >
-                  Changer
-                </Button>
+                <Button type="submit">Changer</Button>
                 <DrawerClose asChild>
                   <Button variant="outline">Annuler</Button>
                 </DrawerClose>

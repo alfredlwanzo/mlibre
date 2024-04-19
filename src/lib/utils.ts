@@ -1,19 +1,22 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { RoleType } from "./types";
+import { RoleType, TagType, UserType } from "./types";
+import { z } from "zod";
+import { MultiSelectorOptionType } from "@/components/ui/multiple-selector";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Phone validation Regex
 export const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
 );
 
-export const usernameRegex=new RegExp(/^[0-9A-Za-z]{3,15}$/)
+// username validation Regex
+export const usernameRegex = new RegExp(/^[0-9A-Za-z]{3,15}$/);
 
-////////////////////////////////////////
-///////// generate hslColor ///////////
+// generate hslColor
 const getHashOfString = (str: string) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -44,24 +47,25 @@ export const getHSLColor = (name: string) => {
   return `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
 };
 
+// Format slug
 export function formatSlug(text: string) {
-  // Supprimer les accents
   const chaineSansAccents = text
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
-  // Remplacer les caractères spéciaux par des tirets
+
   const chaineSansSpeciaux = chaineSansAccents.replace(/[^\w\s-]/g, "");
-  // Remplacer les espaces et apostrophes par des tirets
+
   const chaineSansEspacesApostrophes = chaineSansSpeciaux.replace(
     /[\s']/g,
     "-"
   );
-  // Mettre tout en minuscules
+
   const chaineMinuscules = chaineSansEspacesApostrophes.toLowerCase();
 
   return chaineMinuscules;
 }
 
+// Role name from value
 export function roleLabel(role: RoleType) {
   switch (role) {
     case "subscriber":
@@ -78,5 +82,37 @@ export function roleLabel(role: RoleType) {
       break;
     default:
       break;
+  }
+}
+
+// authors as Select options
+export function authorsAsOptions(authors?: UserType[]) {
+  if (authors) {
+    const options = authors.map((option) => {
+      return { label: option.name, value: option.id };
+    });
+    return options;
+  } else {
+    return [];
+  }
+}
+
+// tags as MultiSelect options
+export const tagOptionSchema = z.object({
+  // tag option schema validation
+  label: z.string(),
+  value: z.string(),
+  disable: z.boolean().optional(),
+});
+
+export function tagAsOptions(tags?: TagType[]) {
+  let options: MultiSelectorOptionType[] = [];
+  if (tags) {
+    tags.forEach((tag) => {
+      options.push({ label: tag.name, value: `${tag.id}` });
+    });
+    return options;
+  } else {
+    return [];
   }
 }

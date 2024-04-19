@@ -124,7 +124,7 @@ export const TagCard: React.FC<TagCardProps> = ({
                 Voulez-vous supprimer #{tag.name}?
               </h3>
               <p className=" text-sm opacity-90">
-                Si oui, ce tag sera retiré de tout contenu qui l&apos;utilise.
+                Si oui, assurez-vous que la suppression est nécessaire et justifiée. ce tag sera retiré de tout contenu qui l&apos;utilise.
                 Noter que cette opération est irréversible.
               </p>
             </div>

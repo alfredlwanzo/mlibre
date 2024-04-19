@@ -1,5 +1,4 @@
 import { changeUserPassword } from "@/actions/ws/users/change-password";
-import { deleteUser } from "@/actions/ws/users/delete-user";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -19,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { useToast } from "@/components/ui/use-toast";
 import { UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -95,7 +95,8 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
   return (
     <Drawer open={openDelete} onOpenChange={setOpenDelete}>
       {/* <DrawerTrigger asChild> */}
-      <Button
+      <LoadingButton
+        loading={loading}
         disabled={loading}
         variant="secondary"
         onClick={(e) => {
@@ -106,11 +107,11 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
         size="sm"
       >
         Changer le mot de passe
-      </Button>
+      </LoadingButton>
       {/* </DrawerTrigger> */}
       <DrawerContent>
         <Form {...formPWD}>
-          <form onSubmit={formPWD.handleSubmit(onSubmit)} className="space-y-8">
+          <form className="space-y-8">
             <div className="mx-auto w-full max-w-sm">
               <DrawerHeader>
                 <DrawerTitle>
@@ -136,6 +137,10 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
                               type={showPWD ? "text" : "password"}
                               placeholder=""
                               className={cn("w-full font-black pr-12")}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                formPWD.trigger("newPassword");
+                              }}
                             />
                             <Button
                               type="button"
@@ -174,6 +179,10 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
                               type={showConfirmPWD ? "text" : "password"}
                               placeholder=""
                               className={cn("w-full font-black pr-12")}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                formPWD.trigger("confirmNewPassword");
+                              }}
                             />
                             <Button
                               type="button"
@@ -201,7 +210,17 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
                 </div>
               </div>
               <DrawerFooter>
-                <Button type="submit">Changer</Button>
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    formPWD.trigger();
+                    if (formPWD.formState.isValid) {
+                      onSubmit(formPWD.getValues());
+                    }
+                  }}
+                >
+                  Changer
+                </Button>
                 <DrawerClose asChild>
                   <Button variant="outline">Annuler</Button>
                 </DrawerClose>

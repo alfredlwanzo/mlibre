@@ -22,7 +22,7 @@ import {
   tagOptionSchema,
 } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BlockNoteView, useCreateBlockNote } from "@blocknote/react";
 import { useTheme } from "next-themes";
 import MultipleSelector from "@/components/ui/multiple-selector";
@@ -50,10 +50,11 @@ import {
 import { RxCaretSort, RxCheck } from "react-icons/rx";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArticleType, TagType, UserType } from "@/lib/types";
 import { createArticle } from "@/actions/ws/articles/create-article";
 import { useToast } from "@/components/ui/use-toast";
+import { DrawerDeleteArticle } from "./drawer-delete";
 
 const formSchema = z.object({
   title: z
@@ -109,6 +110,8 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
   const [AUTHORS_AS_OPTIONS] = useState(authorsAsOptions(authors));
   const [TAGS_AS_OPTIONS] = useState(tagAsOptions(tags));
   const { toast } = useToast();
+  const searchParams = useSearchParams()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -140,6 +143,19 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
       setLoading(false);
     });
   }
+  function notifyCreatedArticle(newCreationMsg: string | null) {
+    if (newCreationMsg === "success") {
+      toast({
+        title: "Créé",
+        description: "L'article a été bien créer",
+      });
+     router.replace(`/ws/articles/${article?.id}`)
+    }
+  }
+
+  useEffect(() => {
+    notifyCreatedArticle(searchParams.get("new"));
+  }, []);
 
   return (
     <Form {...form}>
@@ -518,6 +534,27 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
                             </FormControl>
                           </FormItem>
                         )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-none shadow-none">
+                  <CardHeader>
+                    <CardTitle>Zone dangereuse</CardTitle>
+                    <CardDescription>
+                    Attention : Supprimer un article peut impacter la cohérence et le référencement. Veuillez réfléchir à cette décision. Si vous avez des doutes, veuillez en discuter avec l&apos;équipe éditoriale ou les responsables avant de procéder
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col justify-center rounded-lg border p-3  space-y-2">
+                      <FormLabel>Suppression</FormLabel>
+                      <FormDescription>
+                      Assurez-vous que la suppression est nécessaire et justifiée
+                      </FormDescription>
+                      <DrawerDeleteArticle
+                        article={article}
+                        loading={loading}
+                        setLoading={setLoading}
                       />
                     </div>
                   </CardContent>

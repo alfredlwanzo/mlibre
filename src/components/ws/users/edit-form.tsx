@@ -227,7 +227,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                   <Input
                                     {...field}
                                     placeholder=""
-                                    disabled={!editUsername}
+                                    disabled={!editUsername||loading}
                                     className={cn("w-full font-black pr-12")}
                                     onChange={async (e) => {
                                       field.onChange(e);
@@ -261,6 +261,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                   <Button
                                     type="button"
                                     variant="ghost"
+                                    disabled={loading}
                                     size="icon"
                                     className=" absolute right-0 rounded-l-none"
                                     onClick={(e) => {
@@ -289,7 +290,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                 <div className="relative flex">
                                   <Input
                                     {...field}
-                                    disabled={!editEmail}
+                                    disabled={!editEmail||loading}
                                     type="email"
                                     placeholder=""
                                     className={cn("w-full font-black")}
@@ -298,6 +299,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                     type="button"
                                     variant="ghost"
                                     size="icon"
+                                    disabled={loading}
                                     className=" absolute right-0 rounded-l-none"
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -323,6 +325,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                               <FormControl>
                                 <Input
                                   {...field}
+                                  disabled={loading}
                                   type="tel"
                                   placeholder=""
                                   className={cn("w-full font-black")}
@@ -362,6 +365,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                 <Input
                                   {...field}
                                   placeholder=""
+                                  disabled={loading}
                                   className={cn("w-full font-black")}
                                 />
                               </FormControl>
@@ -386,6 +390,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}
+                                  disabled={loading}
                                   className="text-muted-foreground"
                                 />
                               </FormControl>
@@ -405,6 +410,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled={loading}
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -464,6 +470,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                disabled={loading}
                               />
                             </FormControl>
                           </FormItem>
@@ -485,6 +492,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                disabled={loading}
                               />
                             </FormControl>
                           </FormItem>

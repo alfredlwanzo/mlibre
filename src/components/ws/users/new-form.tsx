@@ -217,6 +217,7 @@ export default function NewUserForm() {
                                   <Input
                                     {...field}
                                     placeholder=""
+                                    disabled={loading}
                                     className={cn("w-full font-black pr-12")}
                                     onChange={async (e) => {
                                       field.onChange(e);
@@ -264,6 +265,7 @@ export default function NewUserForm() {
                                   {...field}
                                   type="email"
                                   placeholder=""
+                                  disabled={loading}
                                   className={cn("w-full font-black")}
                                 />
                               </FormControl>
@@ -284,6 +286,7 @@ export default function NewUserForm() {
                                   {...field}
                                   type="tel"
                                   placeholder=""
+                                  disabled={loading}
                                   className={cn("w-full font-black")}
                                 />
                               </FormControl>
@@ -305,12 +308,14 @@ export default function NewUserForm() {
                                     {...field}
                                     type={showPWD ? "text" : "password"}
                                     placeholder=""
+                                    disabled={loading}
                                     className={cn("w-full font-black pr-12")}
                                   />
                                   <Button
                                     type="button"
                                     variant="ghost"
                                     size="icon"
+                                    disabled={loading}
                                     className=" absolute right-0 rounded-l-none"
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -344,12 +349,14 @@ export default function NewUserForm() {
                                     {...field}
                                     type={showConfirmPWD ? "text" : "password"}
                                     placeholder=""
+                                    disabled={loading}
                                     className={cn("w-full font-black pr-12")}
                                   />
                                   <Button
                                     type="button"
                                     variant="ghost"
                                     size="icon"
+                                    disabled={loading}
                                     className=" absolute right-0 rounded-l-none"
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -381,6 +388,7 @@ export default function NewUserForm() {
                                 <Input
                                   {...field}
                                   placeholder=""
+                                  disabled={loading}
                                   className={cn("w-full font-black")}
                                 />
                               </FormControl>
@@ -405,6 +413,7 @@ export default function NewUserForm() {
                               <FormControl>
                                 <AutosizeTextarea
                                   {...field}
+                                  disabled={loading}
                                   className="text-muted-foreground"
                                 />
                               </FormControl>
@@ -424,6 +433,7 @@ export default function NewUserForm() {
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
+                                disabled={loading}
                               >
                                 <FormControl>
                                   <SelectTrigger>
@@ -475,6 +485,7 @@ export default function NewUserForm() {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                disabled={loading}
                               />
                             </FormControl>
                           </FormItem>

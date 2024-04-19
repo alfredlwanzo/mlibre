@@ -334,10 +334,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                   <CardHeader>
                     <CardTitle>Zone dangereuse</CardTitle>
                     <CardDescription>
-                      Soyez conscient de ce que vous pouvez faire ici. La
-                      suppression d&apos;un tag peut occasioner des
-                      perturbations liés à l&apos;accessibilité et au
-                      référencement
+                    Attention : Supprimer un tag peut impacter la cohérence et le référencement. Veuillez réfléchir à cette décision. Si vous avez des doutes, veuillez en discuter avec l&apos;équipe éditoriale ou les responsables avant de procéder
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -345,8 +342,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                       <FormLabel>Suppression</FormLabel>
                       <FormDescription>
                         En supprimant ce tag, il sera retiré de tout contenu qui
-                        l&apos;utilise. Noter que cette opération est
-                        irréversible.
+                        l&apos;utilise. Assurez-vous que la suppression est nécessaire et justifiée
                       </FormDescription>
                       <DrawerDeleteTag
                         tag={tag}

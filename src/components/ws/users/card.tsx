@@ -51,7 +51,6 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 p-5 bg-background rounded-lg">
       <div className="flex flex-1 space-x-4">
-        <div className="relative">
           <Avatar>
             <AvatarImage src="" />
             <AvatarFallback
@@ -61,10 +60,6 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
               {user.name.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
-          {user.blocked && (
-            <div className=" absolute right-0 bottom-0 h-3 w-3 rounded-full bg-red-400 border-2 border-background" />
-          )}
-        </div>
         <div>
           <Link href={`/ws/users/${user.username}`}>
             <h3 className="font-semibold leading-none tracking-tight">
@@ -76,10 +71,14 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
           </Link>
           <p className="text-sm text-muted-foreground">
             @{user.username}{" "}
-            <Badge variant="secondary" className="">
+            <Badge variant="secondary" className="mr-1">
               {roleLabel(user.role)}
             </Badge>
+            {
+            user.blocked&&<Badge variant="destructive">Bloqué</Badge>
+          }
           </p>
+          
         </div>
       </div>
       <div className="flex flex-col md:items-end py-4 md:py-0 pl-14 md:pl-0">
@@ -89,8 +88,9 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
           </h3>
         </Link>
         <p className="text-sm text-muted-foreground"> {user.email}</p>
+        
       </div>
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end items-end space-x-3">
         <Link href={`/ws/users/${user.username}`}>
           <Button variant="secondary" size="sm" disabled={loading}>
             Modifier

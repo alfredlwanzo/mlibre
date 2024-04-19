@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { date, z } from "zod";
 
 const formSchema = z.object({
+  id: z.number(),
   title: z
     .string()
     .min(2, {
@@ -28,7 +29,7 @@ const formSchema = z.object({
   blocked: z.boolean(),
 });
 
-export async function createArticle(formData: z.infer<typeof formSchema>) {
+export async function updateArticle(formData: z.infer<typeof formSchema>) {
   const { tags, customTags, ...formDataWithoutTags } = formData;
 
   const slug = formatSlug(formData.title);
@@ -39,12 +40,14 @@ export async function createArticle(formData: z.infer<typeof formSchema>) {
     tagIds.push({ tagId: Number(tag.value) });
   });
 
-  const newArticle = await prisma.article
-    .create({
+  const updatedArticle = await prisma.article
+    .update({
+      where: { id: formData.id },
       data: { year, slug, ...formDataWithoutTags, tags: { create: tagIds } },
     })
     .catch(() => {
-      throw new Error("Failed to create article");
+      throw new Error("Failed to update article");
     });
-  redirect(`/ws/articles/${newArticle.id}?new=success`);
+  revalidatePath(`/ws/articles`);
+  return updatedArticle;
 }

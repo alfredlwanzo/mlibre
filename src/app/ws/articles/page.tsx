@@ -13,9 +13,9 @@ const getArticles = async (searchParams?: {
   published?: string;
   blocked?: string;
 }) => {
-
+  "use server";
   // get all blocked articles
-  if (searchParams?.blocked==="true") {
+  if (searchParams?.blocked === "true") {
     const articles = await prisma.article.findMany({
       where: {
         AND: [
@@ -25,6 +25,19 @@ const getArticles = async (searchParams?: {
               { title: { contains: searchParams.q } },
               { description: { contains: searchParams.q } },
               { author: { name: { contains: searchParams.q } } },
+              {
+                AND: [
+                  {
+                    OR: [
+                      {
+                        tags: {
+                          some: { tag: { name: { contains: searchParams?.q } } },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -33,7 +46,7 @@ const getArticles = async (searchParams?: {
         author: {},
         tags: { include: { tag: {} } },
       },
-      orderBy:{updatedAt:"desc"}
+      orderBy: { updatedAt: "desc" },
     });
     return articles;
   }
@@ -50,6 +63,19 @@ const getArticles = async (searchParams?: {
               { title: { contains: searchParams?.q } },
               { description: { contains: searchParams?.q } },
               { author: { name: { contains: searchParams?.q } } },
+              {
+                AND: [
+                  {
+                    OR: [
+                      {
+                        tags: {
+                          some: { tag: { name: { contains: searchParams?.q } } },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -58,7 +84,7 @@ const getArticles = async (searchParams?: {
         author: {},
         tags: { include: { tag: {} } },
       },
-      orderBy:{updatedAt:"desc"}
+      orderBy: { updatedAt: "desc" },
     });
     return articles;
   }
@@ -75,6 +101,19 @@ const getArticles = async (searchParams?: {
               { title: { contains: searchParams?.q } },
               { description: { contains: searchParams?.q } },
               { author: { name: { contains: searchParams?.q } } },
+              {
+                AND: [
+                  {
+                    OR: [
+                      {
+                        tags: {
+                          some: { tag: { name: { contains: searchParams?.q } } },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -83,11 +122,10 @@ const getArticles = async (searchParams?: {
         author: {},
         tags: { include: { tag: {} } },
       },
-      orderBy:{updatedAt:"desc"}
+      orderBy: { updatedAt: "desc" },
     });
     return articles;
   }
-
 
   // get all articles
   const articles = await prisma.article.findMany({
@@ -98,6 +136,19 @@ const getArticles = async (searchParams?: {
             { title: { contains: searchParams?.q } },
             { description: { contains: searchParams?.q } },
             { author: { name: { contains: searchParams?.q } } },
+            {
+              AND: [
+                {
+                  OR: [
+                    {
+                      tags: {
+                        some: { tag: { name: { contains: searchParams?.q } } },
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       ],
@@ -106,7 +157,7 @@ const getArticles = async (searchParams?: {
       author: {},
       tags: { include: { tag: {} } },
     },
-    orderBy:{updatedAt:"desc"}
+    orderBy: { updatedAt: "desc" },
   });
   return articles;
 };
@@ -144,7 +195,8 @@ export default async function ArticlesPage({
                 variant={"ghost"}
                 size="sm"
                 className={cn(
-                  !searchParams &&
+                  !searchParams.blocked &&
+                    typeof searchParams.published === "undefined" &&
                     "text-primary bg-background hover:bg-background"
                 )}
               >

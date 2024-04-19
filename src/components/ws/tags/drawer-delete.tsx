@@ -9,6 +9,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { useToast } from "@/components/ui/use-toast";
 import { TagType } from "@/lib/types";
 import { SetStateAction, useState, Dispatch } from "react";
@@ -45,7 +46,8 @@ export const DrawerDeleteTag: React.FC<DrawerDeleteTagProps> = ({
   return (
     <Drawer open={openDelete} onOpenChange={setOpenDelete}>
       {/* <DrawerTrigger asChild> */}
-      <Button
+      <LoadingButton
+        loading={loading}
         disabled={loading}
         variant="destructive"
         onClick={(e) => {
@@ -55,14 +57,14 @@ export const DrawerDeleteTag: React.FC<DrawerDeleteTagProps> = ({
         size="sm"
       >
         Supprimer
-      </Button>
+      </LoadingButton>
       {/* </DrawerTrigger> */}
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>Voulez-vous supprimer #{tag?.name}?</DrawerTitle>
             <DrawerDescription>
-              Si oui, ce tag sera retiré de tout contenu qui l&apos;utilise.
+              Si oui, assurez-vous que la suppression est nécessaire et justifiée. ce tag sera retiré de tout contenu qui l&apos;utilise.
               Noter que cette opération est irréversible.
             </DrawerDescription>
           </DrawerHeader>

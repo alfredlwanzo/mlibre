@@ -42,7 +42,6 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
     if (deletedArticle) {
       toast({
         title: "Supprimé",
-        variant: "success",
         description: "L'article a été bien supprimer",
       });
       setLoading(false);
@@ -50,8 +49,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 p-5 bg-background rounded-lg">
-      <div className="flex flex-col ">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 p-5 bg-background rounded-lg">
+      <div className="flex flex-col lg:col-span-2 ">
         <div className="flex space-x-1">
           <Link href={`/ws/articles/${article.id}`}>
             <h3 className="font-semibold  tracking-tight">{article.title}</h3>
@@ -67,32 +66,32 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
 
         <div className="">
           {article.tags?.map((tag) => (
-            <Badge key={tag.tagId} variant="secondary" className="mr-1">
+            <Badge key={tag.tagId} variant="secondary" className="mr-[2px]">
               <span style={{ color: getHSLColor(`${tag.tag?.name}`) }}>#</span>
               {tag.tag?.name}
             </Badge>
           ))}
         </div>
       </div>
-      <div className="flex flex-col md:items-end py-4 md:py-0 ">
-        <div>
-          {article.blocked && (
-            <Badge variant="destructive" className="w-fit mr-1">
-              Bloqué
-            </Badge>
-          )}
-          {article.published ? (
-            <Badge className="w-fit">Publié</Badge>
-          ) : (
-            <Badge className="w-fit">En attente de plublication</Badge>
-          )}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Le {article.updatedAt.toLocaleDateString("fr")}
-        </p>
-        <h3 className="text-sm font-semibold text-muted-foreground leading-none tracking-tight">
+      <div className="flex flex-col md:items-end py-4 md:py-0 pr-[4px] ">
+        {article.blocked ? (
+          <Badge variant="destructive" className="w-fit">
+            Bloqué
+          </Badge>
+        ) : article.published ? (
+          <Badge className="w-fit">Publié</Badge>
+        ) : (
+          <Badge className="w-fit">En attente de plublication</Badge>
+        )}
+
+        <h3 className="text-sm font-semibold text-muted-foreground">
           {article?.author?.name ?? ""}
         </h3>
+      </div>
+      <div className="md:pl-1">
+        <p className="text-sm text-muted-foreground">
+          {article?.updatedAt.toLocaleString("fr") ?? ""}
+        </p>
       </div>
       <div className="flex justify-end items-end space-x-3">
         <Link href={`/ws/articles/${article.id}`}>
@@ -117,7 +116,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
                 Voulez-vous supprimer: {article.title}?
               </h3>
               <p className=" text-sm opacity-90">
-                Si oui, cet article sera supprimé définitivement. Noter que
+                Si oui, assurez-vous que la suppression est nécessaire et justifiée. Noter que
                 cette opération est irréversible.
               </p>
             </div>

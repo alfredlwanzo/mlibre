@@ -47,7 +47,7 @@ export type ArticleType = {
   updatedAt: Date;
 };
 
-type ArticleTagType = {
+export type ArticleTagType = {
   articleId: number;
   article?: ArticleType;
   tagId: number;

@@ -30,11 +30,13 @@ import {
 import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { createTag } from "@/actions/ws/tags/create-tag";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { TagType } from "@/lib/types";
 import { RecentTagsList } from "./recent-tags";
 import { Edit } from "lucide-react";
+import { DialogCoverImage } from "../articles/dialog-cover-image";
+import Image from "next/image";
 
 export const newTagformSchema = z.object({
   name: z
@@ -47,7 +49,7 @@ export const newTagformSchema = z.object({
   description: z.string().max(255, {
     message: "La description doit comporter au max 255 caractères.",
   }),
-  imageUrl: z.string(),
+  imageUrl: z.string().optional(),
   published: z.boolean(),
   verified: z.boolean(),
 });
@@ -61,6 +63,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
   const [editSlug, setEditSlug]=useState<boolean>(false)
   const router = useRouter();
   const { toast } = useToast();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
   const form = useForm<z.infer<typeof newTagformSchema>>({
     resolver: zodResolver(newTagformSchema),
@@ -89,13 +92,18 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
     if (tag) {
       toast({
         title: "Enregisté",
-        variant: "success",
         description: "Le tag a été bien enregistrer",
       });
       setLoading(false);
+      setCurrentImageUrl("")
       form.reset();
     }
   }
+
+  useEffect(() => {
+    form.setValue("imageUrl", currentImageUrl);
+  }, [currentImageUrl, form]);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -255,12 +263,38 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                         />
                       </div>
 
-                      <div className="space-y-0.5 rounded-lg border p-3">
-                        <FormLabel>Image de couverture</FormLabel>
-                        <div>
-                          <Button variant="outline" size="sm" type="button">
-                            Ajouter
-                          </Button>
+                      <FormField
+                        control={form.control}
+                        name="imageUrl"
+                        render={({ field }) => (
+                          <FormItem className="">
+                            <FormControl className="">
+                              <Input type="hidden" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex space-x-3 rounded-lg ">
+                        {currentImageUrl && (
+                          <div className="w-16 h-16">
+                            <Image
+                              src={currentImageUrl}
+                              alt=""
+                              className="object-cover w-full h-full rounded-md"
+                              height={64}
+                              width={64}
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 space-y-0.5">
+                          {/* <FormLabel className=" leading-none">
+                            Image de couverture
+                          </FormLabel> */}
+
+                          <DialogCoverImage
+                            currentImageUrl={currentImageUrl}
+                            setCurrentImageUrl={setCurrentImageUrl}
+                          />
                         </div>
                       </div>
                     </div>

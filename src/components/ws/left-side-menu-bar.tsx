@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { BiBookContent } from "react-icons/bi";
 import { LiaHashtagSolid } from "react-icons/lia";
 import { TiTags } from "react-icons/ti";
+import { SettingsSheet } from "./settings";
 
 const menuItems: WSMenuItemType[] = [
   {
@@ -70,14 +71,15 @@ export function LeftSideMenuBar() {
       <nav className="flex flex-col gap-y-3">
         <ModeToggle />
         <Separator />
-        <WSMenuItem
+        {/* <WSMenuItem
           item={{
             key: "settings",
             label: "Paramètres",
             icon: <PiGear className="h-[1.2rem] w-[1.2rem]" />,
             href: "/ws/settings",
           }}
-        />
+        /> */}
+        <SettingsSheet/>
         <UserAvatar />
       </nav>
     </aside>

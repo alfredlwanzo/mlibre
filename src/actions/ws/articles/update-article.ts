@@ -3,8 +3,7 @@
 import prisma from "@/lib/prisma";
 import { formatSlug, tagOptionSchema } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { date, z } from "zod";
+import { z } from "zod";
 
 const formSchema = z.object({
   id: z.number(),
@@ -35,19 +34,24 @@ export async function updateArticle(formData: z.infer<typeof formSchema>) {
   const slug = formatSlug(formData.title);
   const year = new Date().getFullYear();
 
-  let tagIds: any = [];
-  tags.forEach((tag) => {
-    tagIds.push({ tagId: Number(tag.value) });
+  const newTagIds = tags.map((tag) => {
+    return { tagId: Number(tag.value) };
   });
 
   const updatedArticle = await prisma.article
     .update({
       where: { id: formData.id },
-      data: { year, slug, ...formDataWithoutTags, tags: { create: tagIds } },
+      data: {
+        year,
+        slug,
+        ...formDataWithoutTags,
+        tags: { deleteMany: {}, create: newTagIds },
+      },
     })
     .catch(() => {
       throw new Error("Failed to update article");
     });
+
   revalidatePath(`/ws/articles`);
   return updatedArticle;
 }

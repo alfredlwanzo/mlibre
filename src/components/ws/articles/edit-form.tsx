@@ -18,8 +18,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   authorsAsOptions,
   cn,
-  tagAsOptions,
+  tagsAsOptions,
   tagOptionSchema,
+  articleTagsAsOptions,
 } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -55,8 +56,13 @@ import { ArticleType, TagType, UserType } from "@/lib/types";
 import { createArticle } from "@/actions/ws/articles/create-article";
 import { useToast } from "@/components/ui/use-toast";
 import { DrawerDeleteArticle } from "./drawer-delete";
+import { updateArticle } from "@/actions/ws/articles/update-article";
+import Image from "next/image";
+import { DialogCoverImage } from "./dialog-cover-image";
+import { uploadFile } from "@/actions/upload-file";
 
 const formSchema = z.object({
+  id: z.number(),
   title: z
     .string()
     .min(2, {
@@ -78,22 +84,8 @@ const formSchema = z.object({
   blocked: z.boolean(),
 });
 
-async function uploadFile(file: File) {
-  const body = new FormData();
-  body.append("file", file);
-
-  const ret = await fetch("https://tmpfiles.org/api/v1/upload", {
-    method: "POST",
-    body: body,
-  });
-  return (await ret.json()).data.url.replace(
-    "tmpfiles.org/",
-    "tmpfiles.org/dl/"
-  );
-}
-
 type EditArticleFormProps = {
-  article?: ArticleType|null;
+  article?: ArticleType | null;
   tags?: TagType[];
   authors?: UserType[];
 };
@@ -101,26 +93,34 @@ type EditArticleFormProps = {
 export const EditArticleForm: React.FC<EditArticleFormProps> = ({
   tags,
   authors,
-  article
+  article,
 }) => {
   const router = useRouter();
-  const editor = useCreateBlockNote({ uploadFile });
+  const editor = useCreateBlockNote({
+    uploadFile: async (file: File) => {
+      return await uploadFile(file);
+    },
+  });
   const { theme } = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
   const [AUTHORS_AS_OPTIONS] = useState(authorsAsOptions(authors));
-  const [TAGS_AS_OPTIONS] = useState(tagAsOptions(tags));
+  const [TAGS_AS_OPTIONS] = useState(tagsAsOptions(tags));
   const { toast } = useToast();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>(
+    `${article?.imageUrl}`
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: article?.id,
       title: article?.title,
-      description:article?.description,
+      description: article?.description,
       content: article?.content,
       markdown: article?.markdown,
       imageUrl: article?.imageUrl,
-      tags: [],
+      tags: articleTagsAsOptions(article?.tags),
       customTags: [],
       published: article?.published,
       authorId: article?.authorId,
@@ -132,7 +132,7 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    await createArticle(values).catch(() => {
+    const article = await updateArticle(values).catch(() => {
       toast({
         title: "Echec",
         variant: "destructive",
@@ -142,20 +142,43 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
       });
       setLoading(false);
     });
+
+    if (article) {
+      toast({
+        title: "Enregisté",
+        description: "Les modifications ont été bien enregistrer",
+      });
+      setLoading(false);
+    }
   }
+
   function notifyCreatedArticle(newCreationMsg: string | null) {
     if (newCreationMsg === "success") {
       toast({
         title: "Créé",
         description: "L'article a été bien créer",
       });
-     router.replace(`/ws/articles/${article?.id}`)
+      router.replace(`/ws/articles/${article?.id}`);
     }
   }
 
   useEffect(() => {
     notifyCreatedArticle(searchParams.get("new"));
   }, []);
+
+  useEffect(() => {
+    async function loadInitialHTMLContent() {
+      if (article) {
+        const blocks = await editor.tryParseHTMLToBlocks(article?.content);
+        editor.replaceBlocks(editor.document, blocks);
+      }
+    }
+    loadInitialHTMLContent();
+  }, [editor, article]);
+
+  useEffect(() => {
+    form.setValue("imageUrl", currentImageUrl);
+  }, [currentImageUrl, form]);
 
   return (
     <Form {...form}>
@@ -217,16 +240,34 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
                 <Card className=" border-none shadow-none">
                   <CardHeader className="pt-0"></CardHeader>
                   <CardContent>
-                    <div className="mb-3">
-                      <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                        }}
-                      >
-                        Image de couverture
-                      </Button>
+                    <div className="pb-4 space-y-4">
+                      <DialogCoverImage
+                        currentImageUrl={currentImageUrl}
+                        setCurrentImageUrl={setCurrentImageUrl}
+                      />
+                      {currentImageUrl && (
+                        <div className=" h-52">
+                          <Image
+                            className=" object-cover w-full h-full"
+                            src={currentImageUrl}
+                            alt=""
+                            height={1000}
+                            width={1000}
+                          />
+                        </div>
+                      )}
                     </div>
+                    <FormField
+                      control={form.control}
+                      name="imageUrl"
+                      render={({ field }) => (
+                        <FormItem className="">
+                          <FormControl className="">
+                            <Input type="hidden" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="title"
@@ -246,6 +287,26 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
                         </FormItem>
                       )}
                     />
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="id"
+                        render={({ field }) => (
+                          <FormItem className=" ">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Id du tag"
+                                className={cn()}
+                                type="hidden"
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <div>
                       <FormField
                         control={form.control}
@@ -542,14 +603,19 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
                   <CardHeader>
                     <CardTitle>Zone dangereuse</CardTitle>
                     <CardDescription>
-                    Attention : Supprimer un article peut impacter la cohérence et le référencement. Veuillez réfléchir à cette décision. Si vous avez des doutes, veuillez en discuter avec l&apos;équipe éditoriale ou les responsables avant de procéder
+                      Attention : Supprimer un article peut impacter la
+                      cohérence et le référencement. Veuillez réfléchir à cette
+                      décision. Si vous avez des doutes, veuillez en discuter
+                      avec l&apos;équipe éditoriale ou les responsables avant de
+                      procéder
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col justify-center rounded-lg border p-3  space-y-2">
                       <FormLabel>Suppression</FormLabel>
                       <FormDescription>
-                      Assurez-vous que la suppression est nécessaire et justifiée
+                        Assurez-vous que la suppression est nécessaire et
+                        justifiée
                       </FormDescription>
                       <DrawerDeleteArticle
                         article={article}

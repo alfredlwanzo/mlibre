@@ -29,19 +29,14 @@ import {
 
 import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { TagType } from "@/lib/types";
 import { updateTag } from "@/actions/ws/tags/update-tag";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { deleteTag } from "@/actions/ws/tags/delete-tag";
 import { Edit } from "lucide-react";
-import { TiTag } from "react-icons/ti";
 import { DrawerDeleteTag } from "./drawer-delete";
+import { DialogCoverImage } from "../articles/dialog-cover-image";
+import Image from "next/image";
 
 const editTagformSchema = z.object({
   id: z.number(),
@@ -55,7 +50,7 @@ const editTagformSchema = z.object({
   description: z.string().max(255, {
     message: "La description doit comporter au max 255 caractères.",
   }),
-  imageUrl: z.string().nullable(),
+  imageUrl: z.string().optional(),
   published: z.boolean(),
   verified: z.boolean(),
 });
@@ -69,6 +64,9 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
   const [editSlug, setEditSlug] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>(
+    `${tag?.imageUrl}`
+  );
 
   const form = useForm<z.infer<typeof editTagformSchema>>({
     resolver: zodResolver(editTagformSchema),
@@ -77,7 +75,7 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
       name: tag?.name,
       slug: tag?.slug,
       description: tag?.description ?? "",
-      imageUrl: tag?.imageUrl,
+      imageUrl: `${tag?.imageUrl}`,
       published: tag?.published,
       verified: tag?.verified,
     },
@@ -98,13 +96,16 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
     if (tag) {
       toast({
         title: "Enregisté",
-        variant: "success",
         description: "Les modifications ont été bien enregistrer",
       });
       setLoading(false);
       router.replace(`/ws/tags/${tag.slug}`);
     }
   }
+
+  useEffect(() => {
+    form.setValue("imageUrl", currentImageUrl);
+  }, [currentImageUrl, form]);
 
   return (
     <Form {...form}>
@@ -282,13 +283,34 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                           )}
                         />
                       </div>
-
-                      <div className="space-y-0.5 rounded-lg border p-3">
-                        <FormLabel>Image de couverture</FormLabel>
-                        <div>
-                          <Button variant="outline" size="sm" type="button">
-                            Ajouter
-                          </Button>
+                      <FormField
+                        control={form.control}
+                        name="imageUrl"
+                        render={({ field }) => (
+                          <FormItem className="">
+                            <FormControl className="">
+                              <Input type="hidden" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex space-x-3 rounded-lg ">
+                        {currentImageUrl && (
+                          <div className="w-16 h-16">
+                            <Image
+                              src={currentImageUrl}
+                              alt=""
+                              className="object-cover w-full h-full rounded-md"
+                              height={64}
+                              width={64}
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 space-y-0.5">
+                          <DialogCoverImage
+                            currentImageUrl={currentImageUrl}
+                            setCurrentImageUrl={setCurrentImageUrl}
+                          />
                         </div>
                       </div>
                     </div>
@@ -334,7 +356,11 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                   <CardHeader>
                     <CardTitle>Zone dangereuse</CardTitle>
                     <CardDescription>
-                    Attention : Supprimer un tag peut impacter la cohérence et le référencement. Veuillez réfléchir à cette décision. Si vous avez des doutes, veuillez en discuter avec l&apos;équipe éditoriale ou les responsables avant de procéder
+                      Attention : Supprimer un tag peut impacter la cohérence et
+                      le référencement. Veuillez réfléchir à cette décision. Si
+                      vous avez des doutes, veuillez en discuter avec
+                      l&apos;équipe éditoriale ou les responsables avant de
+                      procéder
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -342,7 +368,8 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
                       <FormLabel>Suppression</FormLabel>
                       <FormDescription>
                         En supprimant ce tag, il sera retiré de tout contenu qui
-                        l&apos;utilise. Assurez-vous que la suppression est nécessaire et justifiée
+                        l&apos;utilise. Assurez-vous que la suppression est
+                        nécessaire et justifiée
                       </FormDescription>
                       <DrawerDeleteTag
                         tag={tag}

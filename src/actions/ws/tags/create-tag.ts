@@ -15,7 +15,7 @@ const newTagformSchema = z.object({
   description: z.string().max(255, {
     message: "La description doit comporter au max 255 caractères.",
   }),
-  imageUrl: z.string(),
+  imageUrl: z.string().optional(),
   published: z.boolean(),
   verified: z.boolean(),
 });

@@ -34,9 +34,8 @@ export async function createArticle(formData: z.infer<typeof formSchema>) {
   const slug = formatSlug(formData.title);
   const year = new Date().getFullYear();
 
-  let tagIds: any = [];
-  tags.forEach((tag) => {
-    tagIds.push({ tagId: Number(tag.value) });
+  const tagIds = tags.map((tag) => {
+    return { tagId: Number(tag.value) };
   });
 
   const newArticle = await prisma.article

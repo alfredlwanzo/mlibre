@@ -150,7 +150,6 @@ export default function EditUserForm({ user }: EditUserFormProps) {
     if (user) {
       toast({
         title: "Enregisté",
-        variant: "success",
         description: "Les modifications ont été bien enregistrer",
       });
       setLoading(false);

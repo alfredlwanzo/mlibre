@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { RoleType, TagType, UserType } from "./types";
+import { ArticleTagType, RoleType, TagType, UserType } from "./types";
 import { z } from "zod";
 import { MultiSelectorOptionType } from "@/components/ui/multiple-selector";
 
@@ -105,11 +105,23 @@ export const tagOptionSchema = z.object({
   disable: z.boolean().optional(),
 });
 
-export function tagAsOptions(tags?: TagType[]) {
+export function tagsAsOptions(tags?: TagType[]) {
   let options: MultiSelectorOptionType[] = [];
   if (tags) {
     tags.forEach((tag) => {
       options.push({ label: tag.name, value: `${tag.id}` });
+    });
+    return options;
+  } else {
+    return [];
+  }
+}
+
+export function articleTagsAsOptions(tags?: ArticleTagType[]) {
+  let options: MultiSelectorOptionType[] = [];
+  if (tags) {
+    tags.forEach((tag) => {
+      options.push({ label: `${tag.tag?.name}`, value: `${tag.tagId}` });
     });
     return options;
   } else {

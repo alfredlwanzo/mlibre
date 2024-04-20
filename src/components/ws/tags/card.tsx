@@ -92,7 +92,9 @@ export const TagCard: React.FC<TagCardProps> = ({
       <div className="flex-1" />
       <CardFooter className={cn("space-x-3", withActions ? "flex" : "hidden")}>
         {tag.imageUrl && (
-          <Image src={tag.imageUrl} alt="" height={64} width={64} />
+          <div className="w-9 h-9 ">
+          <Image src={tag.imageUrl} alt="" height={64} width={64} className=" object-cover h-full w-full" />
+          </div>
         )}
         <Button
           className=""

@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   authorsAsOptions,
   cn,
-  tagAsOptions,
+  tagsAsOptions,
   tagOptionSchema,
 } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
@@ -50,10 +50,13 @@ import {
 import { RxCaretSort, RxCheck } from "react-icons/rx";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TagType, UserType } from "@/lib/types";
 import { createArticle } from "@/actions/ws/articles/create-article";
 import { useToast } from "@/components/ui/use-toast";
+import { DialogCoverImage } from "./dialog-cover-image";
+import { uploadFile } from "@/actions/upload-file";
+import Image from "next/image";
 
 const formSchema = z.object({
   title: z
@@ -77,20 +80,6 @@ const formSchema = z.object({
   blocked: z.boolean(),
 });
 
-async function uploadFile(file: File) {
-  const body = new FormData();
-  body.append("file", file);
-
-  const ret = await fetch("https://tmpfiles.org/api/v1/upload", {
-    method: "POST",
-    body: body,
-  });
-  return (await ret.json()).data.url.replace(
-    "tmpfiles.org/",
-    "tmpfiles.org/dl/"
-  );
-}
-
 type NewArticleFormProps = {
   tags?: TagType[];
   authors?: UserType[];
@@ -101,12 +90,14 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
   authors,
 }) => {
   const router = useRouter();
-  const editor = useCreateBlockNote({ uploadFile });
+  const editor = useCreateBlockNote({ uploadFile: async (file:File)=>{ return await uploadFile(file)} });
   const { theme } = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
   const [AUTHORS_AS_OPTIONS] = useState(authorsAsOptions(authors));
-  const [TAGS_AS_OPTIONS] = useState(tagAsOptions(tags));
+  const [TAGS_AS_OPTIONS] = useState(tagsAsOptions(tags));
   const { toast } = useToast();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -138,6 +129,10 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
       setLoading(false);
     });
   }
+
+  useEffect(() => {
+    form.setValue("imageUrl", currentImageUrl);
+  }, [currentImageUrl, form]);
 
   return (
     <Form {...form}>
@@ -199,16 +194,34 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
                 <Card className=" border-none shadow-none">
                   <CardHeader className="pt-0"></CardHeader>
                   <CardContent>
-                    <div className="mb-3">
-                      <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                        }}
-                      >
-                        Image de couverture
-                      </Button>
+                    <div className="pb-4 space-y-4">
+                      <DialogCoverImage
+                        currentImageUrl={currentImageUrl}
+                        setCurrentImageUrl={setCurrentImageUrl}
+                      />
+                      {currentImageUrl && (
+                        <div className=" h-52">
+                          <Image
+                            className=" object-cover w-full h-full"
+                            src={currentImageUrl}
+                            alt=""
+                            height={1000}
+                            width={1000}
+                          />
+                        </div>
+                      )}
                     </div>
+                    <FormField
+                      control={form.control}
+                      name="imageUrl"
+                      render={({ field }) => (
+                        <FormItem className="">
+                          <FormControl className="">
+                            <Input type="hidden" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="title"

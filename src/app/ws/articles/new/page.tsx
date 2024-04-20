@@ -4,14 +4,13 @@ import prisma from "@/lib/prisma";
 const getTags = async () => {
   const tags = await prisma.tag.findMany({
     where: { published: true },
-    // orderBy: { name: "asc" },
   });
   return tags;
 };
 
 const getAuthors = async () => {
   const authors = await prisma.user.findMany({
-    where: { role: "author" },
+    where: { role: {not:"subscriber"}, blocked:false },
     select: {
       id: true,
       username: true,

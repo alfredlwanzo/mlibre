@@ -14,6 +14,5 @@ export async function uploadFile(file: File) {
     .catch(() => {
       throw new Error("Fail to upload file");
     });
-  console.log("Reponce url:", (await ret.data).data.url);
   return (await ret.data).data.url as string;
 }

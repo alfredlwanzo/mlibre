@@ -53,7 +53,6 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import { ArticleType, TagType, UserType } from "@/lib/types";
-import { createArticle } from "@/actions/ws/articles/create-article";
 import { useToast } from "@/components/ui/use-toast";
 import { DrawerDeleteArticle } from "./drawer-delete";
 import { updateArticle } from "@/actions/ws/articles/update-article";

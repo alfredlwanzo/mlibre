@@ -7,6 +7,7 @@ const nextConfig = {
           },
         ],
         formats: ['image/webp'],
+        
       },
 };
 

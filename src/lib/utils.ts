@@ -1,6 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ArticleTagType, RoleType, TagType, UserType } from "./types";
+import {
+  AppStatusType,
+  ArticleTagType,
+  RoleType,
+  TagType,
+  UserType,
+} from "./types";
 import { z } from "zod";
 import { MultiSelectorOptionType } from "@/components/ui/multiple-selector";
 
@@ -81,6 +87,24 @@ export function roleLabel(role: RoleType) {
       return "Admin";
       break;
     default:
+      break;
+  }
+}
+
+// App status description from status value
+export function appStatusDescription(status: AppStatusType) {
+  switch (status) {
+    case "online":
+      return "Le site web est accessible et fonctionne correctement";
+      break;
+    case "maintenance":
+      return "Le site web est en cours de maintenance et n'est pas accessible aux utilisateurs";
+      break;
+    case "offline":
+      return "Le site web est temporairement inaccessible ou indisponible";
+      break;
+    default:
+      return "Inconnu"
       break;
   }
 }

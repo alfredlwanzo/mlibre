@@ -287,10 +287,6 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                           </div>
                         )}
                         <div className="flex-1 space-y-0.5">
-                          {/* <FormLabel className=" leading-none">
-                            Image de couverture
-                          </FormLabel> */}
-
                           <DialogCoverImage
                             currentImageUrl={currentImageUrl}
                             setCurrentImageUrl={setCurrentImageUrl}

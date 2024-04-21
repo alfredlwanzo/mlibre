@@ -13,6 +13,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model App {
+  id Int @id @default(autoincrement())
+  title String
+  description String @default("")
+  language ISOLanguageCode @default(fr) // An iso language code
+  status AppStatus @default(online)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AppStatus {
+  online // Le site web est accessible et fonctionne correctement
+  maintenance // Le site web est en cours de maintenance et n'est pas accessible aux utilisateurs
+  offline //Le site web est temporairement inaccessible ou indisponible
+}
+
+enum ISOLanguageCode {
+  fr
+  en
+}
+
+
+
 model User {
   id Int @id @default(autoincrement())
   username String @unique
@@ -62,11 +86,11 @@ model Article {
 
 model ArticleTag {
   articleId Int
-  article Article @relation(fields: [articleId],references: [id])
+  article Article @relation(fields: [articleId],references: [id], onDelete: Cascade)
   tagId Int
   tag Tag @relation(fields: [tagId],references: [id])
   @@id([articleId,tagId])
-  @@map("articles_tags")
+  @@map("article_tags")
 }
 
 model Tag {

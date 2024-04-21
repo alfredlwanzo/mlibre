@@ -1,3 +1,17 @@
+
+export type AppType={
+  id: number;
+  title: string;
+  description: string;
+  language: LanguageType;
+  status: AppStatusType;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type AppStatusType = "online" | "offline" | "maintenance";
+export type LanguageType = "fr" | "en";
+
 export type TagType = {
   id: number;
   name: string;

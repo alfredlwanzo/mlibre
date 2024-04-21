@@ -1,18 +1,17 @@
 'use client'
 import { ModeToggle } from "@/components/mode-toggle";
 import { FiHome, FiUsers } from "react-icons/fi";
-import { PiGear } from "react-icons/pi";
 import { UserAvatar } from "@/components/ws/user-avatar";
 import { Separator } from "@/components/ui/separator";
 import { WSMenu } from "./menu";
-import { WSMenuItem, WSMenuItemType } from "./menu-item";
+import { WSMenuItemType } from "./menu-item";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { BiBookContent } from "react-icons/bi";
-import { LiaHashtagSolid } from "react-icons/lia";
 import { TiTags } from "react-icons/ti";
 import { SettingsSheet } from "./settings";
+import { AppType } from "@/lib/types";
 
 const menuItems: WSMenuItemType[] = [
   {
@@ -41,7 +40,10 @@ const menuItems: WSMenuItemType[] = [
   },
 ];
 
-export function LeftSideMenuBar() {
+type WSLeftSideMenuBarProps={
+  generalSettings:AppType | null
+}
+export const WSLeftSideMenuBar:React.FC<WSLeftSideMenuBarProps>=({generalSettings})=> {
   const {theme}=useTheme()
   return (
     <aside className="h-full flex flex-col items-center p-3 border-r">
@@ -79,7 +81,7 @@ export function LeftSideMenuBar() {
             href: "/ws/settings",
           }}
         /> */}
-        <SettingsSheet/>
+        <SettingsSheet generalSettings={generalSettings}/>
         <UserAvatar />
       </nav>
     </aside>

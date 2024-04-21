@@ -18,8 +18,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { TbCloudUpload, TbDeviceDesktop, TbQuestionMark } from "react-icons/tb";
 import { GeneralSettings } from "./general";
 import { StorageSettings } from "./storage";
+import React from "react";
+import { AppType } from "@/lib/types";
 
-export const SettingsSheet = () => {
+type SettingsSheetProps = {
+  generalSettings: AppType | null;
+};
+
+export const SettingsSheet: React.FC<SettingsSheetProps> = ({
+  generalSettings,
+}) => {
   return (
     <Sheet>
       <SheetTrigger>
@@ -29,18 +37,17 @@ export const SettingsSheet = () => {
           </Button>
         </TooltipWrap>
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent side="left" className=" bg-ws-background">
         <SheetHeader>
           <SheetTitle className=" text-left">Paramètres</SheetTitle>
           <SheetDescription className="text-left">
-            Personnalisez votre compte en ajustant vos informations. Le menu
-            Paramètres vous donne le pouvoir de façonner votre expérience selon
-            vos besoins et vos désirs
+            Personnalisez votre compte en ajustant vos informations selon vos
+            besoins et vos désirs. Après chaque modifications n&apos;oubliez pas
+            d&apos;<span className="text-black">enregistrer</span>.
           </SheetDescription>
         </SheetHeader>
-
         <Tabs defaultValue="general" className="pt-2">
-          <TabsList className=" w-full justify-start">
+          <TabsList className=" w-full justify-start px-0 bg-transparent">
             <TabsTrigger value="general">
               <TbDeviceDesktop className="mr-2" />
               Général
@@ -52,9 +59,9 @@ export const SettingsSheet = () => {
               <TbQuestionMark className="mr-2" /> Assistance
             </TabsTrigger>
           </TabsList>
-          <ScrollArea className=" h-[calc(100vh-188px)] pb-5">
+          <ScrollArea className=" h-[calc(100vh-172px)] pb-5">
             <TabsContent value="general">
-              <GeneralSettings />
+              <GeneralSettings settings={generalSettings} />
             </TabsContent>
             <TabsContent value="storage">
               <StorageSettings />

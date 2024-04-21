@@ -1,19 +1,18 @@
-
-export type AppType={
-  id: number;
+export type AppType = {
+  id: string;
   title: string;
   description: string;
   language: LanguageType;
   status: AppStatusType;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type AppStatusType = "online" | "offline" | "maintenance";
 export type LanguageType = "fr" | "en";
 
 export type TagType = {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   description: string | null;
@@ -25,7 +24,7 @@ export type TagType = {
   updatedAt: Date;
 };
 export type UserType = {
-  id: number;
+  id: string;
   username: string;
   name: string;
   bio: string;
@@ -42,14 +41,14 @@ export type UserType = {
 export type RoleType = "subscriber" | "author" | "editor" | "admin" | "owner";
 
 export type ArticleType = {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   description: string;
   content: string;
   markdown: string;
   imageUrl: string;
-  authorId: number;
+  authorId: string;
   author?: UserType;
   year: number;
   published: boolean;
@@ -62,8 +61,8 @@ export type ArticleType = {
 };
 
 export type ArticleTagType = {
-  articleId: number;
+  articleId: string;
   article?: ArticleType;
-  tagId: number;
+  tagId: string;
   tag?: TagType;
 };

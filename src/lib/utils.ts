@@ -133,7 +133,7 @@ export function tagsAsOptions(tags?: TagType[]) {
   let options: MultiSelectorOptionType[] = [];
   if (tags) {
     tags.forEach((tag) => {
-      options.push({ label: tag.name, value: `${tag.id}` });
+      options.push({ label: tag.name, value: tag.id });
     });
     return options;
   } else {
@@ -145,7 +145,7 @@ export function articleTagsAsOptions(tags?: ArticleTagType[]) {
   let options: MultiSelectorOptionType[] = [];
   if (tags) {
     tags.forEach((tag) => {
-      options.push({ label: `${tag.tag?.name}`, value: `${tag.tagId}` });
+      options.push({ label: `${tag.tag?.name}`, value: tag.tagId });
     });
     return options;
   } else {

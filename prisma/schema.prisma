@@ -13,9 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model App {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   title String
   description String @default("")
   language ISOLanguageCode @default(fr) // An iso language code
@@ -35,10 +34,8 @@ enum ISOLanguageCode {
   en
 }
 
-
-
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   username String @unique
   name String
   bio String @db.Text @default("")
@@ -50,9 +47,53 @@ model User {
   role Role @default(subscriber)
   verified Boolean @default(false)
   blocked Boolean @default(false)
+  emailVerified DateTime?
+  Session       Session[]
+  Account       Account?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@map("users")
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user User? @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@index([userId])
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
 }
 
 enum Role {
@@ -64,14 +105,14 @@ enum Role {
 }
 
 model Article {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   title String @default("")
   slug String @unique
   description String @default("")
   content String @db.Text @default("")
   markdown String @db.Text @default("")
   imageUrl String @default("")
-  authorId Int
+  authorId String
   author User @relation(fields: [authorId],references: [id])
   year Int @db.Year
   published Boolean @default(false)
@@ -85,16 +126,16 @@ model Article {
 }
 
 model ArticleTag {
-  articleId Int
+  articleId String
   article Article @relation(fields: [articleId],references: [id], onDelete: Cascade)
-  tagId Int
+  tagId String
   tag Tag @relation(fields: [tagId],references: [id])
   @@id([articleId,tagId])
   @@map("article_tags")
 }
 
 model Tag {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
   name String @unique
   slug String @unique
   description String? @default("")

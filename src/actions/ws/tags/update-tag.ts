@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const editTagformSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   name: z
     .string()
     .min(2, {

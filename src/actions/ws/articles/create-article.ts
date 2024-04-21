@@ -21,7 +21,7 @@ const formSchema = z.object({
   imageUrl: z.string(),
   tags: z.array(tagOptionSchema),
   customTags: z.array(tagOptionSchema),
-  authorId: z.number(),
+  authorId: z.string().cuid(),
   published: z.boolean(),
   commentable: z.boolean(),
   verified: z.boolean(),
@@ -35,7 +35,7 @@ export async function createArticle(formData: z.infer<typeof formSchema>) {
   const year = new Date().getFullYear();
 
   const tagIds = tags.map((tag) => {
-    return { tagId: Number(tag.value) };
+    return { tagId: tag.value };
   });
 
   const newArticle = await prisma.article

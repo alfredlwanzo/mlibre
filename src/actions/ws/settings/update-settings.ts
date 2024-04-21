@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const generalformSchema = z.object({
+  id:z.string().cuid(),
   title: z
     .string()
     .min(2, {
@@ -20,11 +21,11 @@ const generalformSchema = z.object({
 export async function upsertGeneralSettings(
   formData: z.infer<typeof generalformSchema>
 ) {
+  const {id,...formDataWithoutId}=formData
   const updatedSettings = await prisma.app
-    .upsert({
-      where: { id: 1 },
-      update: { ...formData },
-      create: { ...formData },
+    .update({
+      where: { id: id },
+      data: { ...formDataWithoutId },
     })
     .catch((e) => {
       throw new Error("Failed to update app settings");

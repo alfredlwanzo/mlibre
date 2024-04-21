@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   title: z
     .string()
     .min(2, {
@@ -21,7 +21,7 @@ const formSchema = z.object({
   imageUrl: z.string(),
   tags: z.array(tagOptionSchema),
   customTags: z.array(tagOptionSchema),
-  authorId: z.number(),
+  authorId: z.string().cuid(),
   published: z.boolean(),
   commentable: z.boolean(),
   verified: z.boolean(),
@@ -35,7 +35,7 @@ export async function updateArticle(formData: z.infer<typeof formSchema>) {
   const year = new Date().getFullYear();
 
   const newTagIds = tags.map((tag) => {
-    return { tagId: Number(tag.value) };
+    return { tagId: tag.value };
   });
 
   const updatedArticle = await prisma.article

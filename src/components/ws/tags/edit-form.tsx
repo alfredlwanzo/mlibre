@@ -39,7 +39,7 @@ import { DialogCoverImage } from "../articles/dialog-cover-image";
 import Image from "next/image";
 
 const editTagformSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   name: z
     .string()
     .min(2, {

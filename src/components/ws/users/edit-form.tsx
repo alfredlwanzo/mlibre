@@ -49,7 +49,7 @@ import { DrawerDeleteUser } from "./drawer-delete";
 import { DrawerChangePassword } from "./drawer-password";
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   username: z
     .string()
     .min(3, {

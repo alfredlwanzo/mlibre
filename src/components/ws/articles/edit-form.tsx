@@ -61,7 +61,7 @@ import { DialogCoverImage } from "./dialog-cover-image";
 import { uploadFile } from "@/actions/upload-file";
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   title: z
     .string()
     .min(2, {
@@ -76,7 +76,7 @@ const formSchema = z.object({
   imageUrl: z.string(),
   tags: z.array(tagOptionSchema),
   customTags: z.array(tagOptionSchema),
-  authorId: z.number(),
+  authorId: z.string().cuid(),
   published: z.boolean(),
   commentable: z.boolean(),
   verified: z.boolean(),

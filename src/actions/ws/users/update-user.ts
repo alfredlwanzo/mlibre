@@ -6,7 +6,7 @@ import { phoneRegex, usernameRegex } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string().cuid(),
   username: z
     .string()
     .min(3, {
@@ -56,9 +56,11 @@ const formSchema = z.object({
 
 export async function updateUser(formData: z.infer<typeof formSchema>) {
   const { id, ...dataWithoutId } = formData;
-  const updatedUser=await prisma.user.update({ where: { id }, data: dataWithoutId }).catch(() => {
-    throw new Error("Failed to update user");
-  });
+  const updatedUser = await prisma.user
+    .update({ where: { id }, data: dataWithoutId })
+    .catch(() => {
+      throw new Error("Failed to update user");
+    });
   revalidatePath("/ws/users");
-  return updatedUser
+  return updatedUser;
 }

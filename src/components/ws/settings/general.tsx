@@ -1,4 +1,4 @@
-import { upsertGeneralSettings } from "@/actions/ws/settings/upsert-settings";
+import { upsertGeneralSettings } from "@/actions/ws/settings/update-settings";
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
 import {
   Card,
@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
+  id:z.string().cuid(),
   title: z
     .string()
     .min(2, {
@@ -118,6 +119,25 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="">
+            <FormField
+                control={form.control}
+                name="id"
+                render={({ field }) => (
+                  <FormItem className=" ">
+                    {/* <FormLabel>id</FormLabel> */}
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="hidden"
+                        placeholder=""
+                        disabled={loading}
+                        className={cn("w-full font-black")}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="title"

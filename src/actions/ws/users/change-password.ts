@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 const formSchema = z
   .object({
-    userId: z.number(),
+    userId: z.string().cuid(),
     newPassword: z.string().min(6, {
       message: "Le mot de passe doit comporter au moins 6 caractères.",
     }),

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const formSchema = z.object({
-  articleId: z.number(),
+  articleId: z.string().cuid(),
   redirectToArticles: z.boolean().optional(),
 });
 

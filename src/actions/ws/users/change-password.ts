@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
 const formSchema = z

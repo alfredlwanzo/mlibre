@@ -1,4 +1,4 @@
-import { TooltipWrap } from "@/components/tooltip-wrap";
+import { TooltipWrap } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArticleCard } from "@/components/ws/articles/card";

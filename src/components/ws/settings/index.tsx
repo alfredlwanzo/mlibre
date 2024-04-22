@@ -1,6 +1,6 @@
 "use client";
 
-import { TooltipWrap } from "@/components/tooltip-wrap";
+import { TooltipWrap } from "@/components/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,

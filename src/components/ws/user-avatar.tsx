@@ -12,40 +12,43 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FiLogOut } from "react-icons/fi";
-import { TooltipWrap } from "../tooltip-wrap";
+import { TooltipWrap } from "../tooltip-wrapper";
 import { Button } from "../ui/button";
-import { PiGear } from "react-icons/pi";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { logOut } from "@/actions/auth";
 
 export function UserAvatar() {
-  const router=useRouter()
+  const { data: session } = useSession();
   return (
     <DropdownMenu>
-      <TooltipWrap content="Compte utilisateur">
+      <TooltipWrap content="Compte" side="right">
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>UN</AvatarFallback>
+              <AvatarImage src={session?.user?.image || ""} />
+              <AvatarFallback className=" uppercase bg-foreground text-white">
+                {session?.user?.name?.substring(0, 2)}
+              </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
       </TooltipWrap>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>demo@witrine.app</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="">
+        <DropdownMenuLabel>{session?.user?.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => {}}>
           <LiaUserSolid className="mr-2 " />
           Profil
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => {}}>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={async () => {
+            await logOut();
+          }}
+        >
           <FiLogOut className="mr-2" />
           Déconnexion
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => {router.push("/ws/settings")}}>
-          <PiGear className="mr-2" />
-          Paramètres
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

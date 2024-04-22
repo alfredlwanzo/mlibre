@@ -64,7 +64,7 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
   });
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    if (typeof user?.id === "number") {
+    if (user?.id) {
       setOpenDelete(false);
       setLoading(true);
       const updatedUser = await changeUserPassword({

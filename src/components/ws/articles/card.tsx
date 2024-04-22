@@ -58,7 +58,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           {article.imageUrl && (
             <Image
               src={article.imageUrl}
-              alt="Your Image"
+              alt=""
               className="object-cover w-full h-full rounded-md"
               height={64}
               width={64}

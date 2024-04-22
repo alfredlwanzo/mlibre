@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import "@blocknote/react/style.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthWrapper } from "@/components/auth-wrapper";
 
 const alata = Alata({ weight: "400", subsets: ["latin"] });
 
@@ -39,8 +40,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <AuthWrapper>
+            {children}
+            <Toaster />
+          </AuthWrapper>
         </ThemeProvider>
       </body>
     </html>

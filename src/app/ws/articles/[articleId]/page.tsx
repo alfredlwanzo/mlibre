@@ -33,7 +33,7 @@ const getArticle = async (articleId: string) => {
   
   const article = await prisma.article
     .findUnique({
-      where: { id: Number(articleId) },
+      where: { id:articleId },
       include: { author: {},tags:{include:{tag:{}}} },
     })
     .catch((e) => {

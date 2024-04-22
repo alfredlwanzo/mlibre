@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import { phoneRegex, usernameRegex } from "@/lib/utils";
 
 const formSchema = z

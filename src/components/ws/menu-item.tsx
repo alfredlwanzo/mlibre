@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { TooltipWrap } from "../tooltip-wrap";
+import { TooltipWrap } from "../tooltip-wrapper";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";

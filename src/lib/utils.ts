@@ -86,6 +86,9 @@ export function roleLabel(role: RoleType) {
     case "admin":
       return "Admin";
       break;
+      case "owner":
+      return "Owner";
+      break;
     default:
       break;
   }
@@ -113,7 +116,7 @@ export function appStatusDescription(status: AppStatusType) {
 export function authorsAsOptions(authors?: UserType[]) {
   if (authors) {
     const options = authors.map((option) => {
-      return { label: option.name, value: option.id };
+      return { label: `${option.name}`, value: option.id };
     });
     return options;
   } else {

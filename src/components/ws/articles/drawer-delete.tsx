@@ -29,7 +29,7 @@ export const DrawerDeleteArticle: React.FC<DrawerDeleteArticleProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const { toast } = useToast();
   const handleDelete = async () => {
-    if (typeof article?.id === "number") {
+    if (article?.id) {
       setOpenDelete(false);
       setLoading(true);
       await deleteArticle({

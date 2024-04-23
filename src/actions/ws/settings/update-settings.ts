@@ -1,10 +1,11 @@
 "use server";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const generalformSchema = z.object({
-  id:z.string().cuid(),
+  id: z.string().cuid(),
   title: z
     .string()
     .min(2, {
@@ -21,15 +22,25 @@ const generalformSchema = z.object({
 export async function upsertGeneralSettings(
   formData: z.infer<typeof generalformSchema>
 ) {
-  const {id,...formDataWithoutId}=formData
-  const updatedSettings = await prisma.app
-    .update({
-      where: { id: id },
-      data: { ...formDataWithoutId },
-    })
-    .catch((e) => {
-      throw new Error("Failed to update app settings");
-    });
-  revalidatePath("/ws");
-  return updatedSettings;
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to update settings");
+  }
+
+  if (session.user.role === "admin" || session.user.role === "owner") {
+    const { id, ...formDataWithoutId } = formData;
+    const updatedSettings = await prisma.app
+      .update({
+        where: { id: id },
+        data: { ...formDataWithoutId },
+      })
+      .catch((e) => {
+        throw new Error("Failed to update app settings");
+      });
+    revalidatePath("/ws");
+    return updatedSettings;
+  } else {
+    throw new Error("You must be admin or owner to update settings");
+  }
 }

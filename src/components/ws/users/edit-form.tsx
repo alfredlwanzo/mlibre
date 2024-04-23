@@ -47,6 +47,7 @@ import { IoIosCloseCircle } from "react-icons/io";
 import { updateUser } from "@/actions/ws/users/update-user";
 import { DrawerDeleteUser } from "./drawer-delete";
 import { DrawerChangePassword } from "./drawer-password";
+import { roles } from "@/lib/data/roles";
 
 const formSchema = z.object({
   id: z.string().cuid(),
@@ -65,7 +66,7 @@ const formSchema = z.object({
   email: z
     .string()
     .email({ message: "Le format de l'adresse mail n'est pas valide" }),
-  avatar: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
   phone: z
     .string()
     .min(10, {
@@ -87,25 +88,13 @@ const formSchema = z.object({
     .string()
     .max(255, {
       message: "La description doit comporter au max 255 caractères.",
-    })
-    .optional(),
+    }),
   role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
   blocked: z.boolean().optional(),
   verified: z.boolean().optional(),
 });
 
-type RoleOption = {
-  label: string;
-  value: RoleType;
-};
 
-const roles: RoleOption[] = [
-  { label: "Abonné", value: "subscriber" },
-  { label: "Auteur", value: "author" },
-  { label: "Éditeur", value: "editor" },
-  { label: "Administrateur", value: "admin" },
-  //   { label: "Owner", value: "owner" },
-];
 type EditUserFormProps = {
   user?: UserType | null;
 };
@@ -123,12 +112,12 @@ export default function EditUserForm({ user }: EditUserFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: user?.id,
-      username: user?.username,
+      username: `${user?.username}`,
       email: user?.email,
-      name: user?.name,
+      name: user?.name??"",
       phone: user?.phone ?? "",
-      avatar: user?.avatar,
-      bio: user?.bio,
+      image: user?.image,
+      bio: `${user?.bio}`,
       role: user?.role,
       blocked: user?.blocked,
       verified: user?.verified,

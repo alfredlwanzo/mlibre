@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { phoneRegex, usernameRegex } from "@/lib/utils";
+import { auth } from "@/lib/auth";
 
 const formSchema = z
   .object({
@@ -29,7 +30,7 @@ const formSchema = z
     confirmPassword: z.string().min(6, {
       message: "Le mot de passe doit comporter au moins 6 caractères.",
     }),
-    avatar: z.string().nullable().optional(),
+    image: z.string().nullable().optional(),
     phone: z
       .string()
       .min(10, {
@@ -63,12 +64,21 @@ const formSchema = z
   });
 
 export async function createUser(formData: z.infer<typeof formSchema>) {
-  const { password, confirmPassword, ...dataWithoutPasswords } = formData;
-  const hashedPWD = await bcrypt.hash(password, 10);
-  await prisma.user
-    .create({ data: { ...dataWithoutPasswords, password: hashedPWD } })
-    .catch(() => {
-      throw new Error("Failed to create user");
-    });
-  redirect("/ws/users");
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to create user");
+  }
+  if (session.user.role === "admin" || session.user.role === "owner") {
+    const { password, confirmPassword, ...dataWithoutPasswords } = formData;
+    const hashedPWD = await bcrypt.hash(password, 10);
+    await prisma.user
+      .create({ data: { ...dataWithoutPasswords, password: hashedPWD } })
+      .catch(() => {
+        throw new Error("Failed to create user");
+      });
+    redirect("/ws/users");
+  } else {
+    throw new Error("You must be admin or owner to create user");
+  }
 }

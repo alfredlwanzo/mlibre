@@ -1,15 +1,15 @@
 import { getAppSetup } from "@/actions/ws/setup";
-import { LoginForm } from "@/components/login/login-form";
+import { SetupForm } from "@/components/setup/setup-form";
 import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
+export default async function SetupPage() {
   const app = await getAppSetup();
-  if (!app) {
-    redirect("/setup");
+  if (app) {
+    redirect("/ws");
   }
   return (
     <div className=" bg-ws-background">
-      <LoginForm />
+      <SetupForm />
     </div>
   );
 }

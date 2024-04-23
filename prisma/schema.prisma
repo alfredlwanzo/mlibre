@@ -11,8 +11,8 @@ datasource db {
 
 model App {
   id String @id @default(cuid())
-  title String
-  description String @default("")
+  title String @default("Mlibre")
+  description String @default("Le Média libre d'accès")
   language ISOLanguageCode @default(fr) // An iso language code
   status AppStatus @default(online)
   createdAt DateTime @default(now())
@@ -101,8 +101,8 @@ model Article {
   content String @db.Text @default("")
   markdown String @db.Text @default("")
   imageUrl String @default("")
-  authorId String
-  author User @relation(fields: [authorId],references: [id])
+  authorId String?
+  author User? @relation(fields: [authorId],references: [id])
   year Int @db.SmallInt
   published Boolean @default(false)
   commentable Boolean @default(true)

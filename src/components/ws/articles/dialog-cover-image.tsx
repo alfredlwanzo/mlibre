@@ -1,4 +1,4 @@
-import { uploadFile } from "@/actions/upload-file";
+import { uploadFile } from "@/actions/ws/upload-file";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {

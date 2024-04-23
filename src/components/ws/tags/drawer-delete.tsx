@@ -28,7 +28,7 @@ export const DrawerDeleteTag: React.FC<DrawerDeleteTagProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const { toast } = useToast();
   const handleDelete = async () => {
-    if (typeof tag?.id === "number") {
+    if (tag?.id) {
       setLoading(true);
       await deleteTag({ tagId: tag?.id, redirectToTags: true }).catch(() => {
         toast({

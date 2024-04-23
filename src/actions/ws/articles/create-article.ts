@@ -1,10 +1,10 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { formatSlug, tagOptionSchema } from "@/lib/utils";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { date, z } from "zod";
+import {  z } from "zod";
 
 const formSchema = z.object({
   title: z
@@ -29,6 +29,12 @@ const formSchema = z.object({
 });
 
 export async function createArticle(formData: z.infer<typeof formSchema>) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to create an article");
+  }
+
   const { tags, customTags, ...formDataWithoutTags } = formData;
 
   const slug = formatSlug(formData.title);

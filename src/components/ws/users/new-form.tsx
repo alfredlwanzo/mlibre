@@ -38,13 +38,13 @@ import {
 } from "@/components/ui/select";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import { RoleType } from "@/lib/types";
 import { createUser } from "@/actions/ws/users/create-user";
 import { useToast } from "@/components/ui/use-toast";
 import { checkUsername } from "@/actions/ws/users/check-username";
 import { AiOutlineLoading } from "react-icons/ai";
 import { TbCircleCheckFilled } from "react-icons/tb";
 import { IoIosCloseCircle } from "react-icons/io";
+import { roles } from "@/lib/data/roles";
 
 const formSchema = z
   .object({
@@ -69,7 +69,7 @@ const formSchema = z
     confirmPassword: z.string().min(6, {
       message: "Le mot de passe doit comporter au moins 6 caractères.",
     }),
-    avatar: z.string().nullable().optional(),
+    image: z.string().nullable().optional(),
     phone: z
       .string()
       .min(10, {
@@ -102,18 +102,7 @@ const formSchema = z
     message: "Les mots de passe ne correspondent pas",
   });
 
-type RoleOption = {
-  label: string;
-  value: RoleType;
-};
 
-const roles: RoleOption[] = [
-  { label: "Abonné", value: "subscriber" },
-  { label: "Auteur", value: "author" },
-  { label: "Éditeur", value: "editor" },
-  { label: "Administrateur", value: "admin" },
-  //   { label: "Owner", value: "owner" },
-];
 
 export default function NewUserForm() {
   const router = useRouter();

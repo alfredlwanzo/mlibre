@@ -58,7 +58,7 @@ import { DrawerDeleteArticle } from "./drawer-delete";
 import { updateArticle } from "@/actions/ws/articles/update-article";
 import Image from "next/image";
 import { DialogCoverImage } from "./dialog-cover-image";
-import { uploadFile } from "@/actions/upload-file";
+import { uploadFile } from "@/actions/ws/upload-file";
 
 const formSchema = z.object({
   id: z.string().cuid(),

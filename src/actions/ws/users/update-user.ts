@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { phoneRegex, usernameRegex } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
 
 const formSchema = z.object({
   id: z.string().cuid(),
@@ -41,8 +42,7 @@ const formSchema = z.object({
     .min(4, {
       message: "Le nom doit comporter au moins 4 caractères.",
     })
-    .trim()
-    .optional(),
+    .trim(),
   bio: z
     .string()
     .max(255, {
@@ -55,12 +55,21 @@ const formSchema = z.object({
 });
 
 export async function updateUser(formData: z.infer<typeof formSchema>) {
-  const { id, ...dataWithoutId } = formData;
-  const updatedUser = await prisma.user
-    .update({ where: { id }, data: dataWithoutId })
-    .catch(() => {
-      throw new Error("Failed to update user");
-    });
-  revalidatePath("/ws/users");
-  return updatedUser;
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to update user");
+  }
+  if (session.user.role === "admin" || session.user.role === "owner") {
+    const { id, ...dataWithoutId } = formData;
+    const updatedUser = await prisma.user
+      .update({ where: { id }, data: dataWithoutId })
+      .catch(() => {
+        throw new Error("Failed to update user");
+      });
+    revalidatePath("/ws/users");
+    return updatedUser;
+  } else {
+    throw new Error("You must be admin or owner to update user");
+  }
 }

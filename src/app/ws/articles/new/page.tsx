@@ -18,7 +18,7 @@ const getAuthors = async () => {
       bio: true,
       email: true,
       phone: true,
-      avatar: true,
+      image: true,
       role: true,
       verified: true,
       blocked: true,

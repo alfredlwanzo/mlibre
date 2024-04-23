@@ -28,7 +28,7 @@ export const DrawerDeleteUser: React.FC<DrawerDeleteUserProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const { toast } = useToast();
   const handleDelete = async () => {
-    if (typeof user?.id === "number") {
+    if (user?.id) {
       setOpenDelete(false);
       setLoading(true);
       await deleteUser({ userId: user.id, redirectToUsers: true }).catch(() => {

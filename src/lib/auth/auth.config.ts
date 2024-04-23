@@ -15,10 +15,24 @@ export const authConfig = {
       return session;
     },
 
-    authorized: ({ auth, request: { nextUrl } }) => {
+    authorized: ({ auth, request: { nextUrl, url } }) => {
       if (nextUrl.pathname.startsWith("/ws") && auth === null) {
         return false;
       }
+      if (nextUrl.pathname.startsWith("/login") && auth) {
+        return Response.redirect(new URL("/ws", url));
+      }
+
+      if (
+        nextUrl.pathname.startsWith("/ws") &&
+        auth &&
+        (auth.user.role === "subscriber" ||
+          auth.user.role === "author" ||
+          auth.user.role === "editor")
+      ) {
+        return Response.redirect(new URL("/", url));
+      }
+
       return true;
     },
   },

@@ -55,8 +55,9 @@ import { TagType, UserType } from "@/lib/types";
 import { createArticle } from "@/actions/ws/articles/create-article";
 import { useToast } from "@/components/ui/use-toast";
 import { DialogCoverImage } from "./dialog-cover-image";
-import { uploadFile } from "@/actions/upload-file";
+import { uploadFile } from "@/actions/ws/upload-file";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   title: z
@@ -97,6 +98,7 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
   const [TAGS_AS_OPTIONS] = useState(tagsAsOptions(tags));
   const { toast } = useToast();
   const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
+  const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -108,6 +110,7 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
       imageUrl: "",
       tags: [],
       customTags: [],
+      authorId:session?.user.id,
       published: true,
       verified: true,
       commentable: true,

@@ -25,12 +25,12 @@ export type TagType = {
 };
 export type UserType = {
   id: string;
-  username: string;
-  name: string;
-  bio: string;
+  username: string | null;
+  name: string | null;
+  bio: string | null;
   email: string;
   phone: string | null;
-  avatar: string | null;
+  image: string | null;
   role: RoleType;
   verified: boolean;
   blocked: boolean;
@@ -48,7 +48,7 @@ export type ArticleType = {
   content: string;
   markdown: string;
   imageUrl: string;
-  authorId: string;
+  authorId?: string;
   author?: UserType;
   year: number;
   published: boolean;

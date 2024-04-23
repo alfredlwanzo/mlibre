@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { formatSlug, tagOptionSchema } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
@@ -21,7 +22,7 @@ const formSchema = z.object({
   imageUrl: z.string(),
   tags: z.array(tagOptionSchema),
   customTags: z.array(tagOptionSchema),
-  authorId: z.string().cuid(),
+  authorId: z.string().cuid().optional(),
   published: z.boolean(),
   commentable: z.boolean(),
   verified: z.boolean(),
@@ -29,6 +30,11 @@ const formSchema = z.object({
 });
 
 export async function updateArticle(formData: z.infer<typeof formSchema>) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to update an article");
+  }
   const { tags, customTags, ...formDataWithoutTags } = formData;
 
   const slug = formatSlug(formData.title);

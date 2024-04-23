@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -11,6 +12,11 @@ const formSchema = z.object({
 });
 
 export async function deleteArticle(formData: z.infer<typeof formSchema>) {
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to delete an article");
+  }
   const deletedArticle = await prisma.article
     .delete({ where: { id: formData.articleId } })
     .catch(() => {

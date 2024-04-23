@@ -1,5 +1,5 @@
 "use server";
-// import { newTagformSchema } from "@/app/ws/tags/new/page";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -27,11 +27,20 @@ const editTagformSchema = z.object({
 });
 
 export async function updateTag(formData: z.infer<typeof editTagformSchema>) {
-  const updatedTag = await prisma.tag
-    .update({ where: { id: formData.id }, data: formData })
-    .catch(() => {
-      throw new Error("Failed to update tag");
-    });
-  revalidatePath("/ws/tags");
-  return updatedTag;
+  const session = await auth();
+
+  if (!session) {
+    throw new Error("You must be connected to update tag");
+  }
+  if (session.user.role === "admin" || session.user.role === "owner") {
+    const updatedTag = await prisma.tag
+      .update({ where: { id: formData.id }, data: formData })
+      .catch(() => {
+        throw new Error("Failed to update tag");
+      });
+    revalidatePath("/ws/tags");
+    return updatedTag;
+  } else {
+    throw new Error("You must be admin or owner to update tag");
+  }
 }

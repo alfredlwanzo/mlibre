@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { languages } from "@/lib/data/languages";
 import { AppStatusType, AppType, LanguageType } from "@/lib/types";
 import { appStatusDescription, cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,7 +36,7 @@ import { z } from "zod";
 const formSchema = z.object({
   id:z.string().cuid(),
   title: z
-    .string()
+    .string({required_error:"Le titre est obligatoire"})
     .min(2, {
       message: "Le titre doit comporter au moins 2 caractères.",
     })
@@ -47,20 +48,14 @@ const formSchema = z.object({
   status: z.enum(["online", "offline", "maintenance"]),
 });
 
-type LanguageOption = {
-  label: string;
-  value: LanguageType;
-};
+
 
 type AppStatusOption = {
   label: string;
   value: AppStatusType;
 };
 
-const languages: LanguageOption[] = [
-  { label: "Français", value: "fr" },
-  { label: "English", value: "en" },
-];
+
 
 const statuses: AppStatusOption[] = [
   { label: "En ligne", value: "online" },
@@ -78,6 +73,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id:settings?.id,
       title: settings?.title,
       description: settings?.description,
       status: settings?.status,

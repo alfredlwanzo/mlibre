@@ -14,7 +14,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { FiLogOut } from "react-icons/fi";
 import { TooltipWrap } from "../tooltip-wrapper";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { logOut } from "@/actions/auth";
 
@@ -27,7 +26,7 @@ export function UserAvatar() {
           <Button variant="ghost" size="icon" className="rounded-full">
             <Avatar>
               <AvatarImage src={session?.user?.image || ""} />
-              <AvatarFallback className=" uppercase bg-foreground text-white">
+              <AvatarFallback className=" uppercase bg-foreground text-background">
                 {session?.user?.name?.substring(0, 2)}
               </AvatarFallback>
             </Avatar>

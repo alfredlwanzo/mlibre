@@ -1,26 +1,11 @@
 "use server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { NewTagformSchemaType } from "@/lib/zod/tags";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
-const newTagformSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  slug: z.string(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  imageUrl: z.string().optional(),
-  published: z.boolean(),
-  verified: z.boolean(),
-});
 
-export async function createTag(formData: z.infer<typeof newTagformSchema>) {
+export async function createTag(formData: NewTagformSchemaType) {
   const session = await auth();
 
   if (!session) {

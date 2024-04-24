@@ -2,33 +2,11 @@
 
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { formatSlug, tagOptionSchema } from "@/lib/utils";
+import { formatSlug } from "@/lib/utils";
+import { NewArticleFormSchemaType } from "@/lib/zod/articles";
 import { redirect } from "next/navigation";
-import {  z } from "zod";
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  content: z.string(),
-  markdown: z.string(),
-  imageUrl: z.string(),
-  tags: z.array(tagOptionSchema),
-  customTags: z.array(tagOptionSchema),
-  authorId: z.string().cuid(),
-  published: z.boolean(),
-  commentable: z.boolean(),
-  verified: z.boolean(),
-  blocked: z.boolean(),
-});
-
-export async function createArticle(formData: z.infer<typeof formSchema>) {
+export async function createArticle(formData: NewArticleFormSchemaType) {
   const session = await auth();
 
   if (!session) {

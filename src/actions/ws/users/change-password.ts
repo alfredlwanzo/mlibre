@@ -5,23 +5,9 @@ import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { ChangePasswordformSchemaType } from "@/lib/zod/users";
 
-const formSchema = z
-  .object({
-    userId: z.string().cuid(),
-    newPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-    confirmNewPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-  })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    path: ["confirmNewPassword"],
-    message: "Les mots de passe ne correspondent pas",
-  });
-
-export async function changeUserPassword(formData: z.infer<typeof formSchema>) {
+export async function changeUserPassword(formData: ChangePasswordformSchemaType) {
   const session = await auth();
 
   if (!session) {

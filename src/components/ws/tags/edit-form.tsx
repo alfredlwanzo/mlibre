@@ -37,23 +37,7 @@ import { Edit } from "lucide-react";
 import { DrawerDeleteTag } from "./drawer-delete";
 import { DialogCoverImage } from "../articles/dialog-cover-image";
 import Image from "next/image";
-
-const editTagformSchema = z.object({
-  id: z.string().cuid(),
-  name: z
-    .string()
-    .min(2, {
-      message: "Le nom du tag doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  slug: z.string(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  imageUrl: z.string().optional(),
-  published: z.boolean(),
-  verified: z.boolean(),
-});
+import { EditTagformSchemaType, editTagformSchema } from "@/lib/zod/tags";
 
 type EditTagFormProps = {
   tag?: TagType | null;
@@ -68,20 +52,20 @@ export const EditTagForm: React.FC<EditTagFormProps> = ({ tag }) => {
     `${tag?.imageUrl}`
   );
 
-  const form = useForm<z.infer<typeof editTagformSchema>>({
+  const form = useForm<EditTagformSchemaType>({
     resolver: zodResolver(editTagformSchema),
     defaultValues: {
       id: tag?.id,
       name: tag?.name,
       slug: tag?.slug,
-      description: tag?.description ?? "",
+      description: `${tag?.description}`,
       imageUrl: `${tag?.imageUrl}`,
       published: tag?.published,
       verified: tag?.verified,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof editTagformSchema>) {
+  async function onSubmit(values: EditTagformSchemaType) {
     setLoading(true);
     const tag = await updateTag(values).catch(() => {
       toast({

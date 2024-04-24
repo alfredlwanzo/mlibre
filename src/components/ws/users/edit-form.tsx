@@ -48,52 +48,7 @@ import { updateUser } from "@/actions/ws/users/update-user";
 import { DrawerDeleteUser } from "./drawer-delete";
 import { DrawerChangePassword } from "./drawer-password";
 import { roles } from "@/lib/data/roles";
-
-const formSchema = z.object({
-  id: z.string().cuid(),
-  username: z
-    .string()
-    .min(3, {
-      message: "L'identifiant doit comporter au moins 3 caractères.",
-    })
-    .max(15, {
-      message: "L'identifiant doit comporter au max 15 caractères.",
-    })
-    .regex(usernameRegex, {
-      message:
-        "L'identifiant doit contenir uniquement des lettres miniscules et des chiffres sans espace. Évitez les caractères spéciaux",
-    }),
-  email: z
-    .string()
-    .email({ message: "Le format de l'adresse mail n'est pas valide" }),
-  image: z.string().nullable().optional(),
-  phone: z
-    .string()
-    .min(10, {
-      message: "Le numéro de téléphone doit comporter au moins 10 chiffres.",
-    })
-    .max(14, {
-      message: "Le numéro de téléphone doit comporter au max 14 chiffres.",
-    })
-    .regex(phoneRegex, { message: "Le numéro de téléphone n'est valide" })
-    .trim()
-    .optional(),
-  name: z
-    .string()
-    .min(4, {
-      message: "Le nom doit comporter au moins 4 caractères.",
-    })
-    .trim(),
-  bio: z
-    .string()
-    .max(255, {
-      message: "La description doit comporter au max 255 caractères.",
-    }),
-  role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
-  blocked: z.boolean().optional(),
-  verified: z.boolean().optional(),
-});
-
+import { EditUserFormSchemaType, editUserformSchema } from "@/lib/zod/users";
 
 type EditUserFormProps = {
   user?: UserType | null;
@@ -108,13 +63,13 @@ export default function EditUserForm({ user }: EditUserFormProps) {
   const [checkingStatus, setCheckingStatus] = useState<"free" | "used">();
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<EditUserFormSchemaType>({
+    resolver: zodResolver(editUserformSchema),
     defaultValues: {
       id: user?.id,
       username: `${user?.username}`,
       email: user?.email,
-      name: user?.name??"",
+      name: user?.name ?? "",
       phone: user?.phone ?? "",
       image: user?.image,
       bio: `${user?.bio}`,
@@ -124,7 +79,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: EditUserFormSchemaType) {
     setLoading(true);
     const user = await updateUser(values).catch(() => {
       toast({
@@ -215,7 +170,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                   <Input
                                     {...field}
                                     placeholder=""
-                                    disabled={!editUsername||loading}
+                                    disabled={!editUsername || loading}
                                     className={cn("w-full font-black pr-12")}
                                     onChange={async (e) => {
                                       field.onChange(e);
@@ -278,7 +233,7 @@ export default function EditUserForm({ user }: EditUserFormProps) {
                                 <div className="relative flex">
                                   <Input
                                     {...field}
-                                    disabled={!editEmail||loading}
+                                    disabled={!editEmail || loading}
                                     type="email"
                                     placeholder=""
                                     className={cn("w-full font-black")}

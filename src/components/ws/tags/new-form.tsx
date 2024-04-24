@@ -37,22 +37,7 @@ import { RecentTagsList } from "./recent-tags";
 import { Edit } from "lucide-react";
 import { DialogCoverImage } from "../articles/dialog-cover-image";
 import Image from "next/image";
-
-export const newTagformSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Le nom du tag doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  slug: z.string(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  imageUrl: z.string().optional(),
-  published: z.boolean(),
-  verified: z.boolean(),
-});
+import { NewTagformSchemaType, newTagformSchema } from "@/lib/zod/tags";
 
 type NewTagFormProps = {
   recentTags?: TagType[];
@@ -60,12 +45,12 @@ type NewTagFormProps = {
 
 export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [editSlug, setEditSlug]=useState<boolean>(false)
+  const [editSlug, setEditSlug] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
   const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
-  const form = useForm<z.infer<typeof newTagformSchema>>({
+  const form = useForm<NewTagformSchemaType>({
     resolver: zodResolver(newTagformSchema),
     defaultValues: {
       name: "",
@@ -77,7 +62,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof newTagformSchema>) {
+  async function onSubmit(values: NewTagformSchemaType) {
     setLoading(true);
     const tag = await createTag(values).catch(() => {
       toast({
@@ -95,7 +80,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
         description: "Le tag a été bien enregistrer",
       });
       setLoading(false);
-      setCurrentImageUrl("")
+      setCurrentImageUrl("");
       form.reset();
     }
   }
@@ -150,7 +135,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                 type="button"
                 disabled={loading}
                 onClick={(e) => {
-                    e.preventDefault()
+                  e.preventDefault();
                   router.back();
                 }}
               >
@@ -166,9 +151,9 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                   <CardHeader>
                     <CardTitle>Tag</CardTitle>
                     <CardDescription>
-                      Un tag est un mot ou un groupe de mots court utilisé pour identifier
-                      ou classifier du contenu, comme les articles, les images,
-                      les vidéos, etc.
+                      Un tag est un mot ou un groupe de mots court utilisé pour
+                      identifier ou classifier du contenu, comme les articles,
+                      les images, les vidéos, etc.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -179,26 +164,26 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                           name="name"
                           render={({ field }) => (
                             <FormItem className=" ">
-                                <div className="relative flex items-center">
-                              <FormLabel className="absolute left-3 text-2xl font-black text-primary">
-                                #
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  placeholder="Nom du tag"
-                                  className={cn(
-                                    " pl-7 w-full bg-transparent text-2xl font-black text-primary"
-                                  )}
-                                  onChange={(e) => {
-                                    field.onChange(e);
-                                    form.setValue(
-                                      "slug",
-                                      formatSlug(e.target.value)
-                                    );
-                                  }}
-                                />
-                              </FormControl>
+                              <div className="relative flex items-center">
+                                <FormLabel className="absolute left-3 text-2xl font-black text-primary">
+                                  #
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    placeholder="Nom du tag"
+                                    className={cn(
+                                      " pl-7 w-full bg-transparent text-2xl font-black text-primary"
+                                    )}
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      form.setValue(
+                                        "slug",
+                                        formatSlug(e.target.value)
+                                      );
+                                    }}
+                                  />
+                                </FormControl>
                               </div>
                               <FormMessage />
                             </FormItem>
@@ -232,9 +217,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
                                       setEditSlug((prev) => !prev);
                                     }}
                                   >
-                                   
-                                      <Edit className="text-foreground" />
-                                    
+                                    <Edit className="text-foreground" />
                                   </Button>
                                 </div>
                               </FormControl>
@@ -336,7 +319,7 @@ export const NewTagForm: React.FC<NewTagFormProps> = ({ recentTags }) => {
             </div>
             <div className=" col-span-4">
               <ScrollArea className=" lg:h-[calc(100vh-66px)] bg-ws-background">
-                <RecentTagsList tags={recentTags}/>
+                <RecentTagsList tags={recentTags} />
               </ScrollArea>
             </div>
           </div>

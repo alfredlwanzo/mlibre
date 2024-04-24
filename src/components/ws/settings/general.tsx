@@ -28,34 +28,19 @@ import { toast } from "@/components/ui/use-toast";
 import { languages } from "@/lib/data/languages";
 import { AppStatusType, AppType, LanguageType } from "@/lib/types";
 import { appStatusDescription, cn } from "@/lib/utils";
+import {
+  GeneralSettingsformSchemaType,
+  generalSettingsformSchema,
+} from "@/lib/zod/setup";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z.object({
-  id:z.string().cuid(),
-  title: z
-    .string({required_error:"Le titre est obligatoire"})
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  language: z.enum(["fr", "en"]),
-  status: z.enum(["online", "offline", "maintenance"]),
-});
-
-
-
 type AppStatusOption = {
   label: string;
   value: AppStatusType;
 };
-
-
 
 const statuses: AppStatusOption[] = [
   { label: "En ligne", value: "online" },
@@ -70,17 +55,17 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({
   settings,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<GeneralSettingsformSchemaType>({
+    resolver: zodResolver(generalSettingsformSchema),
     defaultValues: {
-      id:settings?.id,
+      id: settings?.id,
       title: settings?.title,
       description: settings?.description,
       status: settings?.status,
       language: settings?.language,
     },
   });
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: GeneralSettingsformSchemaType) {
     setLoading(true);
     const updatedSettings = await upsertGeneralSettings(values).catch(() => {
       toast({
@@ -115,7 +100,7 @@ export const GeneralSettings: React.FC<GeneralSettingsProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="">
-            <FormField
+              <FormField
                 control={form.control}
                 name="id"
                 render={({ field }) => (

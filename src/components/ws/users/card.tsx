@@ -51,15 +51,15 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 p-5 bg-background rounded-lg">
       <div className="flex flex-1 space-x-4">
-          <Avatar>
-            <AvatarImage src="" />
-            <AvatarFallback
-              className=" uppercase"
-              style={{ color: getHSLColor(user.name) }}
-            >
-              {user.name.substring(0, 2)}
-            </AvatarFallback>
-          </Avatar>
+        <Avatar>
+          <AvatarImage src="" />
+          <AvatarFallback
+            className=" uppercase"
+            style={{ color: getHSLColor(`${user.name}`) }}
+          >
+            {user?.name?.substring(0, 2)}
+          </AvatarFallback>
+        </Avatar>
         <div>
           <Link href={`/ws/users/${user.username}`}>
             <h3 className="font-semibold leading-none tracking-tight">
@@ -74,11 +74,8 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
             <Badge variant="secondary" className="mr-1">
               {roleLabel(user.role)}
             </Badge>
-            {
-            user.blocked&&<Badge variant="destructive">Bloqué</Badge>
-          }
+            {user.blocked && <Badge variant="destructive">Bloqué</Badge>}
           </p>
-          
         </div>
       </div>
       <div className="flex flex-col md:items-end py-4 md:py-0 pl-14 md:pl-0">
@@ -88,7 +85,6 @@ export const UserCard: React.FC<UserCardProps> = ({ user }) => {
           </h3>
         </Link>
         <p className="text-sm text-muted-foreground"> {user.email}</p>
-        
       </div>
       <div className="flex justify-end items-end space-x-3">
         <Link href={`/ws/users/${user.username}`}>

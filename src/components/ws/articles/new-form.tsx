@@ -13,14 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  authorsAsOptions,
-  cn,
-  tagsAsOptions,
-  tagOptionSchema,
-} from "@/lib/utils";
+import { authorsAsOptions, cn, tagsAsOptions } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import { BlockNoteView, useCreateBlockNote } from "@blocknote/react";
@@ -58,28 +52,10 @@ import { DialogCoverImage } from "./dialog-cover-image";
 import { uploadFile } from "@/actions/ws/upload-file";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  content: z.string(),
-  markdown: z.string(),
-  imageUrl: z.string(),
-  tags: z.array(tagOptionSchema),
-  customTags: z.array(tagOptionSchema),
-  authorId: z.string().cuid(),
-  published: z.boolean(),
-  commentable: z.boolean(),
-  verified: z.boolean(),
-  blocked: z.boolean(),
-});
+import {
+  NewArticleFormSchemaType,
+  newArticleFormSchema,
+} from "@/lib/zod/articles";
 
 type NewArticleFormProps = {
   tags?: TagType[];
@@ -91,7 +67,11 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
   authors,
 }) => {
   const router = useRouter();
-  const editor = useCreateBlockNote({ uploadFile: async (file:File)=>{ return await uploadFile(file)} });
+  const editor = useCreateBlockNote({
+    uploadFile: async (file: File) => {
+      return await uploadFile(file);
+    },
+  });
   const { theme } = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
   const [AUTHORS_AS_OPTIONS] = useState(authorsAsOptions(authors));
@@ -100,8 +80,8 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
   const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
   const { data: session } = useSession();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<NewArticleFormSchemaType>({
+    resolver: zodResolver(newArticleFormSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -110,7 +90,7 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
       imageUrl: "",
       tags: [],
       customTags: [],
-      authorId:session?.user.id,
+      authorId: session?.user.id,
       published: true,
       verified: true,
       commentable: true,
@@ -118,7 +98,7 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: NewArticleFormSchemaType) {
     setLoading(true);
     await createArticle(values).catch(() => {
       toast({

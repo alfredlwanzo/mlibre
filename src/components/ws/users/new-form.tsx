@@ -13,9 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { cn, phoneRegex, usernameRegex } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 import { AutosizeTextarea } from "@/components/ui/autosize-textarea";
@@ -45,64 +44,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { TbCircleCheckFilled } from "react-icons/tb";
 import { IoIosCloseCircle } from "react-icons/io";
 import { roles } from "@/lib/data/roles";
-
-const formSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, {
-        message: "L'identifiant doit comporter au moins 3 caractères.",
-      })
-      .max(15, {
-        message: "L'identifiant doit comporter au max 15 caractères.",
-      })
-      .regex(usernameRegex, {
-        message:
-          "L'identifiant doit contenir uniquement des lettres miniscules et des chiffres sans espace. Évitez les caractères spéciaux",
-      }),
-    email: z
-      .string()
-      .email({ message: "Le format de l'adresse mail n'est pas valide" }),
-    password: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-    confirmPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-    image: z.string().nullable().optional(),
-    phone: z
-      .string()
-      .min(10, {
-        message: "Le numéro de téléphone doit comporter au moins 10 chiffres.",
-      })
-      .max(14, {
-        message: "Le numéro de téléphone doit comporter au max 14 chiffres.",
-      })
-      .regex(phoneRegex, { message: "Le numéro de téléphone n'est valide" })
-      .trim()
-      .optional(),
-    name: z
-      .string()
-      .min(4, {
-        message: "Le nom doit comporter au moins 4 caractères.",
-      })
-      .trim(),
-    bio: z
-      .string()
-      .max(255, {
-        message: "La description doit comporter au max 255 caractères.",
-      })
-      .optional(),
-    role: z.enum(["subscriber", "author", "editor", "admin", "owner"]),
-    blocked: z.boolean().optional(),
-    verified: z.boolean().optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Les mots de passe ne correspondent pas",
-  });
-
-
+import { NewUserformSchemaType, newUserformSchema } from "@/lib/zod/users";
 
 export default function NewUserForm() {
   const router = useRouter();
@@ -110,11 +52,11 @@ export default function NewUserForm() {
   const [showPWD, setShowPWD] = useState<boolean>(false);
   const [showConfirmPWD, setShowConfirmPWD] = useState<boolean>(false);
   const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
-  const [checkingStatus, setCheckingStatus]=useState<"free"|"used">()
+  const [checkingStatus, setCheckingStatus] = useState<"free" | "used">();
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<NewUserformSchemaType>({
+    resolver: zodResolver(newUserformSchema),
     defaultValues: {
       bio: "",
       role: "subscriber",
@@ -123,7 +65,7 @@ export default function NewUserForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: NewUserformSchemaType) {
     setLoading(true);
     await createUser(values).catch(() => {
       toast({
@@ -211,16 +153,16 @@ export default function NewUserForm() {
                                     onChange={async (e) => {
                                       field.onChange(e);
                                       setCheckingUsername(true);
-                                      setCheckingStatus(undefined)
+                                      setCheckingStatus(undefined);
                                       const username = await checkUsername(
                                         e.target.value
                                       );
                                       if (username) {
                                         setCheckingUsername(false);
-                                        setCheckingStatus("used")
-                                      }else{
+                                        setCheckingStatus("used");
+                                      } else {
                                         setCheckingUsername(false);
-                                        setCheckingStatus("free")
+                                        setCheckingStatus("free");
                                       }
                                     }}
                                   />
@@ -228,12 +170,12 @@ export default function NewUserForm() {
                                   {checkingUsername && (
                                     <AiOutlineLoading className="absolute right-3 top-[10px] animate-spin h-[1.2rem] w-[1.2rem]" />
                                   )}
-                                  {
-                                    checkingStatus==="free"&& <TbCircleCheckFilled className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-green-400" />
-                                  }
-                                  {
-                                    checkingStatus==="used"&& <IoIosCloseCircle className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-red-400" />
-                                  }
+                                  {checkingStatus === "free" && (
+                                    <TbCircleCheckFilled className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-green-400" />
+                                  )}
+                                  {checkingStatus === "used" && (
+                                    <IoIosCloseCircle className="absolute right-3 top-[10px] h-[1.2rem] w-[1.2rem] text-red-400" />
+                                  )}
                                 </div>
                               </FormControl>
 

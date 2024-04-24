@@ -74,3 +74,27 @@ export const setupSchema = z
   });
 // setupSchema as a type
 export type SetupSchemaType = z.infer<typeof setupSchema>;
+
+// update general settings form schema
+export const generalSettingsformSchema = z.object({
+  id: z.string().cuid(),
+  title: z
+    .string({ required_error: "Le titre est obligatoire" })
+    .min(2, {
+      message: "Le titre doit comporter au moins 2 caractères.",
+    })
+    .trim(),
+  description: z.string().max(255, {
+    message: "La description doit comporter au max 255 caractères.",
+  }),
+  language: z.enum(["fr", "en"], {
+    required_error: "La langue est obligatoire",
+  }),
+  status: z.enum(["online", "offline", "maintenance"], {
+    required_error: "Le statut du site est obligatoire",
+  }),
+});
+// update general settings form schema as a type
+export type GeneralSettingsformSchemaType = z.infer<
+  typeof generalSettingsformSchema
+>;

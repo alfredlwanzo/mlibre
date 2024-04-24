@@ -13,13 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   authorsAsOptions,
   cn,
   tagsAsOptions,
-  tagOptionSchema,
   articleTagsAsOptions,
 } from "@/lib/utils";
 import { GrClose } from "react-icons/gr";
@@ -59,29 +57,10 @@ import { updateArticle } from "@/actions/ws/articles/update-article";
 import Image from "next/image";
 import { DialogCoverImage } from "./dialog-cover-image";
 import { uploadFile } from "@/actions/ws/upload-file";
-
-const formSchema = z.object({
-  id: z.string().cuid(),
-  title: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  content: z.string(),
-  markdown: z.string(),
-  imageUrl: z.string(),
-  tags: z.array(tagOptionSchema),
-  customTags: z.array(tagOptionSchema),
-  authorId: z.string().cuid(),
-  published: z.boolean(),
-  commentable: z.boolean(),
-  verified: z.boolean(),
-  blocked: z.boolean(),
-});
+import {
+  EditArticleFormSchemaType,
+  editArticleFormSchema,
+} from "@/lib/zod/articles";
 
 type EditArticleFormProps = {
   article?: ArticleType | null;
@@ -110,8 +89,8 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
     `${article?.imageUrl}`
   );
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<EditArticleFormSchemaType>({
+    resolver: zodResolver(editArticleFormSchema),
     defaultValues: {
       id: article?.id,
       title: article?.title,
@@ -122,14 +101,14 @@ export const EditArticleForm: React.FC<EditArticleFormProps> = ({
       tags: articleTagsAsOptions(article?.tags),
       customTags: [],
       published: article?.published,
-      authorId: article?.authorId,
+      authorId: `${article?.authorId}`,
       verified: article?.verified,
       commentable: article?.commentable,
       blocked: article?.blocked,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: EditArticleFormSchemaType) {
     setLoading(true);
     const article = await updateArticle(values).catch(() => {
       toast({

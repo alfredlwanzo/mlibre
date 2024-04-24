@@ -48,7 +48,7 @@ export type ArticleType = {
   content: string;
   markdown: string;
   imageUrl: string;
-  authorId?: string;
+  authorId: string |null;
   author?: UserType;
   year: number;
   published: boolean;

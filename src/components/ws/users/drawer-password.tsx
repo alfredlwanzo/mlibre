@@ -22,25 +22,15 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { useToast } from "@/components/ui/use-toast";
 import { UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import {
+  ChangePasswordformSchemaType,
+  changePasswordformSchema,
+} from "@/lib/zod/users";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { SetStateAction, useState, Dispatch } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const formSchema = z
-  .object({
-    newPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-    confirmNewPassword: z.string().min(6, {
-      message: "Le mot de passe doit comporter au moins 6 caractères.",
-    }),
-  })
-  .refine((data) => data.newPassword === data.confirmNewPassword, {
-    path: ["confirmNewPassword"],
-    message: "Les mots de passe ne correspondent pas",
-  });
 
 type DrawerChangePasswordProps = {
   user?: UserType | null;
@@ -58,12 +48,12 @@ export const DrawerChangePassword: React.FC<DrawerChangePasswordProps> = ({
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const { toast } = useToast();
 
-  const formPWD = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const formPWD = useForm<ChangePasswordformSchemaType>({
+    resolver: zodResolver(changePasswordformSchema),
     defaultValues: {},
   });
 
-  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
+  const onSubmit = async (formData: ChangePasswordformSchemaType) => {
     if (user?.id) {
       setOpenDelete(false);
       setLoading(true);

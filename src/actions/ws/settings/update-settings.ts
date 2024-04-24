@@ -1,26 +1,11 @@
 "use server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { GeneralSettingsformSchemaType } from "@/lib/zod/setup";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
-
-const generalformSchema = z.object({
-  id: z.string().cuid(),
-  title: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim(),
-  description: z.string().max(255, {
-    message: "La description doit comporter au max 255 caractères.",
-  }),
-  language: z.enum(["fr", "en"]),
-  status: z.enum(["online", "offline", "maintenance"]),
-});
 
 export async function upsertGeneralSettings(
-  formData: z.infer<typeof generalformSchema>
+  formData: GeneralSettingsformSchemaType
 ) {
   const session = await auth();
 

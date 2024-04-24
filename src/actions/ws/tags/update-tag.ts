@@ -1,32 +1,10 @@
 "use server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { EditTagformSchemaType } from "@/lib/zod/tags";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
-const editTagformSchema = z.object({
-  id: z.string().cuid(),
-  name: z
-    .string()
-    .min(2, {
-      message: "Le titre doit comporter au moins 2 caractères.",
-    })
-    .trim()
-    .optional(),
-  slug: z.string().optional(),
-  description: z
-    .string()
-    .max(255, {
-      message: "La description doit comporter au max 255 caractères.",
-    })
-    .nullable()
-    .optional(),
-  imageUrl: z.string().nullable().optional(),
-  published: z.boolean().optional(),
-  verified: z.boolean().optional(),
-});
-
-export async function updateTag(formData: z.infer<typeof editTagformSchema>) {
+export async function updateTag(formData: EditTagformSchemaType) {
   const session = await auth();
 
   if (!session) {

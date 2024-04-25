@@ -25,7 +25,7 @@ export default async function ArticlePage({
   }
   return (
     <ScrollArea className=" bg-ws-background">
-      <div className=" max-w-screen-md mx-auto pt-10">
+      <div className=" max-w-screen-md mx-auto pt-12">
         <div className="px-6 md:px-0">
           <div>
             <h1 className=" text-3xl font-semibold">{article.title}</h1>
@@ -34,7 +34,7 @@ export default async function ArticlePage({
               {article.tags.map((tag) => (
                 <Badge
                   key={tag.tagId}
-                  variant="secondary"
+                  variant="outline"
                   className="mr-3 text-muted-foreground lowercase "
                 >
                   <span style={{ color: getHSLColor(tag.tag.name) }}>#</span>
@@ -43,8 +43,8 @@ export default async function ArticlePage({
               ))}
             </div>
           </div>
-          <div className="flex space-x-3 py-3 my-4 ">
-            <Avatar>
+          <div className="flex space-x-3 py-3 my-6 ">
+            <Avatar className=" h-12 w-12">
               <AvatarImage src={`${article.author?.image}`} />
               <AvatarFallback className=" uppercase text-background bg-foreground">
                 {article.author?.name?.substring(0, 2)}
@@ -52,7 +52,7 @@ export default async function ArticlePage({
             </Avatar>
             <div className="flex-1">
               <h3 className=" font-semibold">{article.author?.name}</h3>
-              <p className=" text-xs text-muted-foreground">
+              <p className=" text-sm text-muted-foreground">
                 {article.updatedAt.toDateString()}
               </p>
             </div>
@@ -67,13 +67,13 @@ export default async function ArticlePage({
             alt={article.title}
             height={1000}
             width={1000}
-            className=" object-cover w-full h-full"
+            className=" object-cover w-full h-full rounded-t-md"
           />
         </div>
-        <div className="p-6 bg-background">
+        <div className="p-6 bg-background rounded-b-md">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
-        <div className=" border-top mt-8 py-6 px-6 md:px-0">
+        <div className=" border-b mt-10 py-6 px-6 md:px-0">
             <div className="flex items-end">
               <Avatar className=" h-20 w-20">
                 <AvatarImage className="" src={`${article.author?.image}`} />
@@ -82,14 +82,14 @@ export default async function ArticlePage({
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1"/>
-              <Button>Contact</Button>
+              <a href={`https://wa.me/${article.author?.phone}`}><Button>Contact</Button></a>
             </div>
-            <div className="border-b py-6">
+            <div className=" mt-6">
               {/* <h1 className=" text-3xl font-semibold">Auteur</h1> */}
-              <h3 className=" text-2xl font-semibold">
-              Auteur {article.author?.name}
+              <h3 className=" text-2xl font-semibold left-[30px]">
+              {article.author?.name}
               </h3>
-              <p className=" text-muted-foreground">{article.author?.bio}</p>
+              <p className=" text-muted-foreground text-sm">{article.author?.bio}</p>
             </div>
           
          

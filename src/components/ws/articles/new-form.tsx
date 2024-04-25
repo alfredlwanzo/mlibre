@@ -162,7 +162,7 @@ export const NewArticleForm: React.FC<NewArticleFormProps> = ({
                 disabled={loading}
                 onClick={(e) => {
                   e.preventDefault();
-                  router.back();
+                  router.push("/ws/articles");
                 }}
               >
                 <GrClose className="h-[1.2rem] w-[1.2rem]" />

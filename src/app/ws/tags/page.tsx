@@ -13,7 +13,7 @@ const getTags = async (q?: string) => {
   let tags: TagType[] = [];
   if (q) {
     tags = await prisma.tag.findMany({
-      where: { name: { contains: q } },
+      where: { name: { contains: q, mode:"insensitive" } },
       orderBy:{name:"asc"}
     });
   } else {

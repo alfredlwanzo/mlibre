@@ -19,9 +19,9 @@ const getUsers = async (role?: RoleType, q?: string) => {
             { role: role },
             {
               OR: [
-                { name: { contains: q } },
-                { email: { contains: q } },
-                { username: { contains: q } },
+                { name: { contains: q,mode:"insensitive" } },
+                { email: { contains: q,mode:"insensitive" } },
+                { username: { contains: q,mode:"insensitive" } },
               ],
             },
           ],
@@ -39,9 +39,9 @@ const getUsers = async (role?: RoleType, q?: string) => {
           AND: [
             {
               OR: [
-                { name: { contains: q } },
-                { email: { contains: q } },
-                { username: { contains: q } },
+                { name: { contains: q,mode:"insensitive" } },
+                { email: { contains: q,mode:"insensitive" } },
+                { username: { contains: q,mode:"insensitive" } },
               ],
             },
           ],

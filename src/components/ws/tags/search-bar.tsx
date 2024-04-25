@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
 import { z } from "zod";
@@ -18,9 +18,10 @@ export function SearchTagBar() {
     resolver: zodResolver(formData),
   });
   const router = useRouter();
+  const pathname = usePathname();
 
   const search = (data: z.infer<typeof formData>) => {
-    router.push(`/ws/tags?q=${data.query}`);
+    router.push(`${pathname}?q=${data.query}`);
   };
 
   return (
@@ -30,26 +31,27 @@ export function SearchTagBar() {
           control={form.control}
           name="query"
           render={({ field }) => (
-            <FormItem >
+            <FormItem>
               <FormControl>
                 <div className="flex items-center">
-                <Input
-                  {...field}
-                  type="search"
-                  placeholder="Rechercher ..."
-                  className="flex-1 pr-12 bg-transparent"
-                />
-                <Button
-                type="submit"
-                className={cn("absolute bg-transparent right-0 rounded-l-none")}
-                variant="outline"
-                size="icon"
-              >
-                <FiSearch className=" " />
-              </Button>
-              </div>
+                  <Input
+                    {...field}
+                    type="search"
+                    placeholder="Rechercher ..."
+                    className="flex-1 pr-12 bg-transparent"
+                  />
+                  <Button
+                    type="submit"
+                    className={cn(
+                      "absolute bg-transparent right-0 rounded-l-none"
+                    )}
+                    variant="outline"
+                    size="icon"
+                  >
+                    <FiSearch className=" " />
+                  </Button>
+                </div>
               </FormControl>
-              
             </FormItem>
           )}
         />

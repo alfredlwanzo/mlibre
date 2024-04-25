@@ -22,16 +22,29 @@ const getArticles = async (searchParams?: {
           { blocked: true },
           {
             OR: [
-              { title: { contains: searchParams.q } },
-              { description: { contains: searchParams.q } },
-              { author: { name: { contains: searchParams.q } } },
+              { title: { contains: searchParams.q, mode: "insensitive" } },
+              {
+                description: { contains: searchParams.q, mode: "insensitive" },
+              },
+              {
+                author: {
+                  name: { contains: searchParams.q, mode: "insensitive" },
+                },
+              },
               {
                 AND: [
                   {
                     OR: [
                       {
                         tags: {
-                          some: { tag: { name: { contains: searchParams?.q } } },
+                          some: {
+                            tag: {
+                              name: {
+                                contains: searchParams?.q,
+                                mode: "insensitive",
+                              },
+                            },
+                          },
                         },
                       },
                     ],
@@ -60,16 +73,29 @@ const getArticles = async (searchParams?: {
           { blocked: false },
           {
             OR: [
-              { title: { contains: searchParams?.q } },
-              { description: { contains: searchParams?.q } },
-              { author: { name: { contains: searchParams?.q } } },
+              { title: { contains: searchParams?.q, mode: "insensitive" } },
+              {
+                description: { contains: searchParams?.q, mode: "insensitive" },
+              },
+              {
+                author: {
+                  name: { contains: searchParams?.q, mode: "insensitive" },
+                },
+              },
               {
                 AND: [
                   {
                     OR: [
                       {
                         tags: {
-                          some: { tag: { name: { contains: searchParams?.q } } },
+                          some: {
+                            tag: {
+                              name: {
+                                contains: searchParams?.q,
+                                mode: "insensitive",
+                              },
+                            },
+                          },
                         },
                       },
                     ],
@@ -98,16 +124,29 @@ const getArticles = async (searchParams?: {
           { blocked: false },
           {
             OR: [
-              { title: { contains: searchParams?.q } },
-              { description: { contains: searchParams?.q } },
-              { author: { name: { contains: searchParams?.q } } },
+              { title: { contains: searchParams?.q, mode: "insensitive" } },
+              {
+                description: { contains: searchParams?.q, mode: "insensitive" },
+              },
+              {
+                author: {
+                  name: { contains: searchParams?.q, mode: "insensitive" },
+                },
+              },
               {
                 AND: [
                   {
                     OR: [
                       {
                         tags: {
-                          some: { tag: { name: { contains: searchParams?.q } } },
+                          some: {
+                            tag: {
+                              name: {
+                                contains: searchParams?.q,
+                                mode: "insensitive",
+                              },
+                            },
+                          },
                         },
                       },
                     ],
@@ -133,16 +172,27 @@ const getArticles = async (searchParams?: {
       AND: [
         {
           OR: [
-            { title: { contains: searchParams?.q } },
-            { description: { contains: searchParams?.q } },
-            { author: { name: { contains: searchParams?.q } } },
+            { title: { contains: searchParams?.q, mode: "insensitive" } },
+            { description: { contains: searchParams?.q, mode: "insensitive" } },
+            {
+              author: {
+                name: { contains: searchParams?.q, mode: "insensitive" },
+              },
+            },
             {
               AND: [
                 {
                   OR: [
                     {
                       tags: {
-                        some: { tag: { name: { contains: searchParams?.q } } },
+                        some: {
+                          tag: {
+                            name: {
+                              contains: searchParams?.q,
+                              mode: "insensitive",
+                            },
+                          },
+                        },
                       },
                     },
                   ],

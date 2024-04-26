@@ -1,4 +1,4 @@
-This is a free blog template for free and participatory access media.
+This is a free blog template for open access media.
 
 ## Mlibre
 

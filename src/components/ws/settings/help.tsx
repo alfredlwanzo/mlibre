@@ -51,7 +51,7 @@ export const HelpSettings = () => {
           </CardContent>
         </Card>
         <div className="text-muted-foreground text-sm">
-          <p className="">© {date.getFullYear()} Mlibre</p>
+          <p className="leading-3">© {date.getFullYear()} Mlibre</p>
           <p className="">
             Made with <IoIosHeart className=" inline text-[#ff0000]" /> from DRC
           </p>

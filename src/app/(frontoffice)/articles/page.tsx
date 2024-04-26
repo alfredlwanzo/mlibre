@@ -1,15 +1,9 @@
-import { TooltipWrap } from "@/components/tooltip-wrapper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArticleCard } from "@/components/ws/articles/card";
 import { SearchArticleBar } from "@/components/ws/articles/search-bar";
 import prisma from "@/lib/prisma";
 import { cn, getHSLColor } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { LiaEdit } from "react-icons/lia";
 
 const getArticles = async (searchParams?: {
   q?: string;
@@ -81,11 +75,11 @@ export default async function ArticlesPage({
   });
   return (
     <div className=" bg-ws-background">
-      <div className="h-16 flex items-center px-3 space-x-4">
+      {/* <div className="h-16 flex items-center px-3 space-x-4">
         <h1 className=" font-bold flex-1">Articles</h1>
         <div className="flex-1" />
         <SearchArticleBar />
-      </div>
+      </div> */}
       <div className="">
         {articles.length > 0 && (
             <Link href={`/${articles[0].slug}`}>

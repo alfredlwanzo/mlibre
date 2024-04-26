@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -36,7 +35,7 @@ export default async function TagPage({
     return "Not found";
   }
   return (
-    <ScrollArea className=" bg-ws-background h-screen">
+    <div>
       <div className="max-w-screen-md mx-auto py-12 px-6 md:px-0">
         <Card className="border-none shadow-none">
           <CardHeader>
@@ -93,7 +92,7 @@ export default async function TagPage({
             </Card>
           </Link>
         ))}
-      </div>
-    </ScrollArea>
+      </div>{" "}
+    </div>
   );
 }

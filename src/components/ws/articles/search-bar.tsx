@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import path from "path";
 import { useForm } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
 import { z } from "zod";
@@ -19,7 +18,6 @@ export function SearchArticleBar() {
     resolver: zodResolver(formData),
   });
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const search = (data: z.infer<typeof formData>) => {
@@ -29,7 +27,7 @@ export function SearchArticleBar() {
         prevSearchParams = prevSearchParams.concat(`${key}=${value}&`);
     });
 
-    router.push(`${pathname}?${prevSearchParams}&q=${data.query}`);
+    router.push(`/articles?${prevSearchParams}&q=${data.query}`);
   };
 
   return (
@@ -51,7 +49,7 @@ export function SearchArticleBar() {
                   <Button
                     type="submit"
                     className={cn(
-                      "absolute bg-transparent right-0 rounded-l-none"
+                      "absolute bg-transparent right-0 rounded-l-none "
                     )}
                     variant="outline"
                     size="icon"

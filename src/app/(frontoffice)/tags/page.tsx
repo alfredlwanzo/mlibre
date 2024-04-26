@@ -42,7 +42,7 @@ export default async function TagsPage({
         <div className="flex-1" />
         <SearchTagBar />
       </div>
-      <ScrollArea className=" h-[calc(100vh-64px)]">
+      
         <div className="p-6">
           <div className={cn("pb-2", searchParams.q ? "block" : "hidden")}>
             <h1 className="text-sm">
@@ -86,7 +86,6 @@ export default async function TagsPage({
             )}
           </div>
         </div>
-      </ScrollArea>
     </div>
   );
 }

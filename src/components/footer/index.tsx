@@ -9,7 +9,7 @@ export function SiteFooter() {
         <p className="text-xs text-muted-foreground">
           Made with <IoIosHeart className=" inline text-[#ff0000]" /> from DRC
         </p>
-        <p className="text-xs text-muted-foreground">© {date.getFullYear()} Mlibre.</p>
+        <p className="text-xs text-muted-foreground">© {date.getFullYear()} Mlibre</p>
       </div>
     </footer>
   );

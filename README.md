@@ -7,12 +7,14 @@ First, clone the project from this repository:
 ```bash
 git clone https://github.com/alfredlwanzo/mlibre.git
 ```
+To begin, make sure you have set environment variables (sensitive information) and other environment-specific configurations. Mainly *DATABASE_URL* and *AUTH_SECRET*
+
 
 install dependancies:
 ```bash
 npm install
 ```
-run the project as an nextjs app
+run the project as an nextjs app:
 ```bash
 npm run dev
 ```

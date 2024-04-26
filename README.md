@@ -5,13 +5,18 @@ This is a free blog template for open access media.
 First, clone the project from this repository:
 
 ```bash
-git clone 
+git clone https://github.com/alfredlwanzo/mlibre.git
 ```
 
 install dependancies:
 ```bash
 npm install
 ```
+run the project as an nextjs app
+```bash
+npm run dev
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to access the front-office of your blog.
 Open [http://localhost:3000/ws](http://localhost:3000/ws) with your browser to access the back-office of your blog.
 

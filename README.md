@@ -7,7 +7,7 @@ First, clone the project from this repository:
 ```bash
 git clone https://github.com/alfredlwanzo/mlibre.git
 ```
-To begin, make sure you have set environment variables (sensitive information) and other environment-specific configurations. Mainly *DATABASE_URL* and *AUTH_SECRET*
+To continue, make sure you have set environment variables (sensitive information) and other environment-specific configurations. Mainly *DATABASE_URL* and *AUTH_SECRET*
 
 
 install dependancies:
@@ -23,9 +23,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to access 
 Open [http://localhost:3000/ws](http://localhost:3000/ws) with your browser to access the back-office of your blog.
 
 
-## Learn More
+## Demo
 
-To learn more about Mlibre, take a look at the following resources:
+See the demo here: [https://mlibre.vercel.app](https://mlibre.vercel.app)
 
 ## Deploy on Vercel
 

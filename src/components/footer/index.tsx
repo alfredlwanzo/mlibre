@@ -135,7 +135,7 @@ export function SiteFooter() {
           <Card className="border-none shadow-none rounded-none bg-transparent">
             <CardHeader>
               <CardTitle className=" text-[18px]">Adresses</CardTitle>
-              <CardDescription>DRC, Nord-Kivu, Butembo, N⁰89</CardDescription>
+              <CardDescription>DRC, Nord-Kivu, Butembo</CardDescription>
             </CardHeader>
             <CardContent></CardContent>
           </Card>

@@ -84,7 +84,7 @@ export default async function ArticlesPage({
         {articles.length > 0 && (
             <Link href={`/${articles[0].slug}`}>
           <div className="bg-background">
-            <div className=" h-80 flex justify-center items-center">
+            <div className=" h-80 relative flex justify-center items-center">
               <Image
                 src={articles[0].imageUrl}
                 alt={articles[0].title}

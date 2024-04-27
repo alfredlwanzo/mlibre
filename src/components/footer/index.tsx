@@ -122,8 +122,8 @@ export function SiteFooter() {
               <CardTitle className=" text-[18px]">Contacts</CardTitle>
               <CardDescription>
                 <ul>
-                  <li>+243826776661</li>
-                  <li>+243977778829</li>
+                  <li>+243978308679</li>
+                  <li>+243978308679</li>
                   <li>contact@mlibre.org</li>
                 </ul>
               </CardDescription>

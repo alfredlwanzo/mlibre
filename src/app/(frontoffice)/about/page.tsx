@@ -5,7 +5,6 @@ export const metadata: Metadata = {
   description:
     "Mavoix.cd demeure une organisation, un média à but non lucratif qui prone la liberté d'expression comme un droit humain",
   keywords: [
-    "C'est quoi mavoix.cd",
     "mavoix",
     "mavoix.cd",
     "Ma voix",
@@ -20,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  return <main>Ici c&apos;est mavoix.cd</main>;
+  return <main>Ici c&apos; mlibre</main>;
 }

@@ -73,7 +73,7 @@ export default async function ArticlePage({
         <div className="p-6 bg-background rounded-b-md">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
-        <div className=" border-b mt-2 py-6 px-6 md:px-0">
+        <div className=" mt-2 py-6 px-6 md:px-0">
           <div className="flex items-end">
             <Avatar className=" h-20 w-20">
               <AvatarImage className="" src={`${article.author?.image}`} />

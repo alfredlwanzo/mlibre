@@ -91,14 +91,13 @@ export function MobileNav({ lastArticles }: MobileNavProps) {
               {lastArticles?.length &&
                 lastArticles.map((item) => (
                   <React.Fragment key={item.id}>
-                    
-                        <MobileLink
-                          href={`/${item.slug}`}
-                          onOpenChange={setOpen}
-                          className="text-muted-foreground"
-                        >
-                          {item.title}
-                        </MobileLink>
+                    <MobileLink
+                      href={`/${item.slug}`}
+                      onOpenChange={setOpen}
+                      className="text-muted-foreground"
+                    >
+                      {item.title}
+                    </MobileLink>
                   </React.Fragment>
                 ))}
             </div>
@@ -121,7 +120,7 @@ interface MobileLinkProps extends LinkProps {
   className?: string;
 }
 
-function MobileLink({
+export function MobileLink({
   href,
   onOpenChange,
   className,
